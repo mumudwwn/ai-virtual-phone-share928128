@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T01:15:37.844Z",
+  "generatedAt": "2026-09-13T01:19:20.931Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -550,17 +550,16 @@
       "type": "dir",
       "path": "资源/Js插件/朋友圈发贴自动锁脸🔒",
       "files": [
-        "资源/Js插件/朋友圈发贴自动锁脸🔒/朋友圈发帖自动锁脸by阿念.js",
-        "资源/Js插件/朋友圈发贴自动锁脸🔒/生图预设快速保存切换.js"
+        "资源/Js插件/朋友圈发贴自动锁脸🔒/朋友圈发帖自动锁脸by阿念.js"
       ],
       "images": [
         "资源/Js插件/朋友圈发贴自动锁脸🔒/1000307827.jpg"
       ],
-      "description": "插件功能：\n 1. 角色发朋友圈时自动勾选「使用参考图」；\n 2. 注入姿势解绑指令，仅锁定面部五官与发型，动作姿势根据文案自由变化，告别千篇一律的固定姿势。（推荐角色参考图使用标准正脸证件照，效果会更好）\n 3. 如果姿势解绑效果一般，可以尝试在提示词中注入以下内容：\n    仅参考面部五官与发型特征，构图、动作、镜头视角根据画面描述自由变化，禁止复制参考图固定姿势。(face and hair reference only, dynamic natural pose based on prompt, do not copy reference pose)",
+      "description": "插件功能：\n 1. 角色发朋友圈时自动勾选「使用参考图」，再也不用手动勾选再重新生成了；\n 2. 注入姿势解绑指令，仅锁定面部五官与发型，动作姿势根据文案自由变化，告别千篇一律的固定姿势。（推荐角色参考图使用标准正脸证件照，效果会更好）\n 3. 如果姿势解绑效果一般，可以尝试在提示词中注入以下内容：\n    仅参考面部五官与发型特征，构图、动作、镜头视角根据画面描述自由变化，禁止复制参考图固定姿势。(face and hair reference only, dynamic natural pose based on prompt, do not copy reference pose)",
       "author": "锦时念",
       "avatar": "资源/Js插件/朋友圈发贴自动锁脸🔒/.avatar.png",
       "ownerHash": "8be1404dc48b69dac097ce254c34d80c5a2bc55c62acef7b9d6217419189b554",
-      "updatedAt": "2026-09-13T09:15:07+08:00"
+      "updatedAt": "2026-09-13T09:18:36+08:00"
     },
     {
       "folder": "Js插件",

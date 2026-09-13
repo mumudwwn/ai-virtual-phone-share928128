@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T07:38:59.070Z",
+  "generatedAt": "2026-09-13T08:26:36.303Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -1487,7 +1487,7 @@
     },
     {
       "folder": "全局主题",
-      "name": "紫色系",
+      "name": "简约紫色系",
       "dirName": "紫色系",
       "type": "dir",
       "path": "资源/全局主题/紫色系",
@@ -1498,10 +1498,10 @@
         "资源/全局主题/紫色系/IMG_103436.webp"
       ],
       "description": "素材源topwidgets",
-      "author": "",
+      "author": "Mist.Y",
       "avatar": "",
       "ownerHash": "43224a5b025a8c0806c7627788ca68c323ea274cf2e5641d5dcc5170d3bf2b43",
-      "updatedAt": "2026-09-12T16:06:49+08:00"
+      "updatedAt": "2026-09-13T16:25:44+08:00"
     },
     {
       "folder": "全局主题",

@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T03:06:59.904Z",
+  "generatedAt": "2026-09-13T07:38:59.070Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -33,7 +33,7 @@
     },
     {
       "name": "应用",
-      "count": 97
+      "count": 98
     },
     {
       "name": "应用bug改善",
@@ -2443,6 +2443,22 @@
       "avatar": "资源/应用/一家有温度的占卜店/.avatar.png",
       "ownerHash": "9be9e2befed8262f2dc8ebeed5742d4950e3b43a5061d45d16097a53ea6841c0",
       "updatedAt": "2026-08-18T09:24:02+08:00"
+    },
+    {
+      "folder": "应用",
+      "name": "一起听",
+      "dirName": "一起听",
+      "type": "dir",
+      "path": "资源/应用/一起听",
+      "files": [
+        "资源/应用/一起听/netease.listen.together-1.0.0 (1).zip"
+      ],
+      "images": [],
+      "description": "简陋版可以一起听，登录网易云不过要自行部署vercel，界面参考小红书的一位博主，非常的简陋",
+      "author": "希米露",
+      "avatar": "资源/应用/一起听/.avatar.png",
+      "ownerHash": "2f51d33fd54439dc06d804c8da88c3a382b7da816204ef7207419f4b50a75e3b",
+      "updatedAt": "2026-09-13T15:38:13+08:00"
     },
     {
       "folder": "应用",

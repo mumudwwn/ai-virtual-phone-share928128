@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T16:57:52.818Z",
+  "generatedAt": "2026-09-13T17:27:40.708Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -57,7 +57,7 @@
     },
     {
       "name": "游戏",
-      "count": 11
+      "count": 12
     },
     {
       "name": "特调材料",
@@ -4020,6 +4020,24 @@
       "avatar": "资源/游戏/word search/.avatar.png",
       "ownerHash": "3b2ec651ad1405938e448749951310a2a116dd422b84a87c2e25c611edd1200c",
       "updatedAt": "2026-08-28T19:55:54+08:00"
+    },
+    {
+      "folder": "游戏",
+      "name": "一起UNO吧！",
+      "dirName": "一起UNO吧！",
+      "type": "dir",
+      "path": "资源/游戏/一起UNO吧！",
+      "files": [
+        "资源/游戏/一起UNO吧！/一起UNO！.json"
+      ],
+      "images": [
+        "资源/游戏/一起UNO吧！/Camera_XHS_17893169771881040g2sg31e4e2vb3gmdg5o7alglgbmg.jpg"
+      ],
+      "description": "一个可互动UNO小游戏\n1.游戏内可自选头像\n2.沉浸式互动，有时候char回复慢可能是在调用模型\n3.当你被某个人加牌等行为时，可以点击ta的头像对ta做出😡等表情互动\n4.内置了三个凑人数的路人npc\n5.没有设置+2等可叠加的功能，因为被加牌多了以后牌会飞出手机屏幕qwq（但是有+4质疑的规则）",
+      "author": "lshls",
+      "avatar": "",
+      "ownerHash": "16a8b52b7fbad80a5064ee67e0745c16315e8e4e1de8c06675d070dbcc88e63c",
+      "updatedAt": "2026-09-14T01:26:49+08:00"
     },
     {
       "folder": "游戏",

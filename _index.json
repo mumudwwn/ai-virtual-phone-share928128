@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T12:31:56.529Z",
+  "generatedAt": "2026-09-13T12:58:29.261Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -21,7 +21,7 @@
     },
     {
       "name": "全局主题",
-      "count": 7
+      "count": 8
     },
     {
       "name": "剧情预设及正则",
@@ -1470,6 +1470,22 @@
       "avatar": "",
       "ownerHash": "236ecc192be0d623afb290c5cc467a13575a1a2edd0456b3c04869f0825cefab",
       "updatedAt": "2026-08-29T09:19:12+08:00"
+    },
+    {
+      "folder": "全局主题",
+      "name": "天气蒙蒙，你也萌萌",
+      "dirName": "天气蒙蒙，你也萌萌",
+      "type": "dir",
+      "path": "资源/全局主题/天气蒙蒙，你也萌萌",
+      "files": [
+        "资源/全局主题/天气蒙蒙，你也萌萌/float-天气蒙蒙，你也萌萌bySaya.zip"
+      ],
+      "images": [],
+      "description": "一个小主题\n应用不顺手可以自己换位置",
+      "author": "saya",
+      "avatar": "",
+      "ownerHash": "55b5ed5e0fd76e790cc1a3022e1c903518df025162aae4a51f310af986e93e50",
+      "updatedAt": "2026-09-13T20:57:43+08:00"
     },
     {
       "folder": "全局主题",

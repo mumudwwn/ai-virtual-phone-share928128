@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T13:03:09.332Z",
+  "generatedAt": "2026-09-13T13:04:31.989Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -1480,12 +1480,14 @@
       "files": [
         "资源/全局主题/天气蒙蒙，你也萌萌/float-天气蒙蒙，你也萌萌bySaya.zip"
       ],
-      "images": [],
+      "images": [
+        "资源/全局主题/天气蒙蒙，你也萌萌/29238.jpg"
+      ],
       "description": "一个小主题\n应用不顺手可以自己换位置",
       "author": "世紀霧",
       "avatar": "资源/全局主题/天气蒙蒙，你也萌萌/.avatar.png",
       "ownerHash": "55b5ed5e0fd76e790cc1a3022e1c903518df025162aae4a51f310af986e93e50",
-      "updatedAt": "2026-09-13T21:02:23+08:00"
+      "updatedAt": "2026-09-13T21:03:54+08:00"
     },
     {
       "folder": "全局主题",

@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-13T14:03:55.373Z",
+  "generatedAt": "2026-09-13T14:13:11.713Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -3999,11 +3999,11 @@
         "资源/消息列表美化/仿微信-wechat skin/wechat-skin.css"
       ],
       "images": [],
-      "description": "任何调整/bug都可以改！随便肘击！\n请不要二传就好啦！\n消息-我的主页-外观css\n没有线上美化，有好多老师搓过啦！感觉搭配食用会很美味",
+      "description": "任何调整/bug都可以改！随便肘击！\n请不要二传就好啦！\n消息-我的主页-外观css\n没有线上美化，有好多老师搓过啦！感觉搭配食用会很美味\n有夜间模式",
       "author": "Yyk",
       "avatar": "",
       "ownerHash": "6421a1c782ea8ac2c630a5c2333444dde10cf3b346c811e07f133389b31f6777",
-      "updatedAt": "2026-09-13T20:21:42+08:00"
+      "updatedAt": "2026-09-13T22:12:28+08:00"
     },
     {
       "folder": "游戏",

@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-14T07:25:35.223Z",
+  "generatedAt": "2026-09-14T07:41:55.002Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -49,7 +49,7 @@
     },
     {
       "name": "气泡美化",
-      "count": 5
+      "count": 6
     },
     {
       "name": "消息列表美化",
@@ -3925,6 +3925,24 @@
       "avatar": "资源/气泡美化/仿古早消息气泡/.avatar.png",
       "ownerHash": "9255ec1277ace06ef7aebf6566a04ad2844f9b543a7b06e6b1b0b7fe619d781c",
       "updatedAt": "2026-08-14T10:16:41+08:00"
+    },
+    {
+      "folder": "气泡美化",
+      "name": "晨雾棉花糖",
+      "dirName": "晨雾棉花糖",
+      "type": "dir",
+      "path": "资源/气泡美化/晨雾棉花糖",
+      "files": [
+        "资源/气泡美化/晨雾棉花糖/晨雾棉花糖.txt"
+      ],
+      "images": [
+        "资源/气泡美化/晨雾棉花糖/Screenshot_20260914_152952.jpg"
+      ],
+      "description": "聊天气泡，用户是粉紫色的，ai是奶橘色到淡黄色到淡蓝色的渐变。有云朵头像框装饰",
+      "author": "泽",
+      "avatar": "",
+      "ownerHash": "c3b531a2b75b449fe042a520974f60f167ed3b2b94ece49ec6447cae37a96d8e",
+      "updatedAt": "2026-09-14T15:41:02+08:00"
     },
     {
       "folder": "气泡美化",

@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-14T10:22:43.816Z",
+  "generatedAt": "2026-09-14T10:26:25.613Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -130,11 +130,11 @@
         "资源/Js插件/SullyOS情绪buff/1000169002.jpg",
         "资源/Js插件/SullyOS情绪buff/1000169010.jpg"
       ],
-      "description": "和小坊以及gemini搓出来的，站在巨人肩膀上的产物\n挪用了手抓糯米机SullyOS的情绪系统适配到float上\n感觉情绪识别共情好像没有糯米机本身好🤔\n\n\n有想增加修改更细腻的，拜托了🙏🏻",
+      "description": "代码小白和小坊以及gemini搓出来的，站在巨人肩膀上的产物，感谢伟大的老师们\n挪用了手抓糯米机SullyOS的情绪系统适配到float上\n感觉情绪识别共情好像没有糯米机本身好🤔\n情绪会注入到下一轮当中，应该\n一次生成1-5个，可左右滑动查看\n有想增加修改更细腻的，拜托了🙏🏻",
       "author": "Jcin",
       "avatar": "",
       "ownerHash": "83954432093f464d18e734fb94adb5cb6ba6eac3c0ae0b6c309ca5ff747f54ed",
-      "updatedAt": "2026-09-14T18:21:56+08:00"
+      "updatedAt": "2026-09-14T18:25:41+08:00"
     },
     {
       "folder": "Js插件",

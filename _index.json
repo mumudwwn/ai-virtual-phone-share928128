@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-15T06:58:04.210Z",
+  "generatedAt": "2026-09-15T08:37:10.122Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -33,7 +33,7 @@
     },
     {
       "name": "应用",
-      "count": 101
+      "count": 102
     },
     {
       "name": "应用bug改善",
@@ -2704,6 +2704,26 @@
       "avatar": "资源/应用/你画我猜/.avatar.png",
       "ownerHash": "3fa5d4b8a645483b397341996fd8240c49b89d41e275e38cf975dc0418149767",
       "updatedAt": "2026-08-30T22:19:42+08:00"
+    },
+    {
+      "folder": "应用",
+      "name": "凡尔赛晨报",
+      "dirName": "凡尔赛晨报",
+      "type": "dir",
+      "path": "资源/应用/凡尔赛晨报",
+      "files": [
+        "资源/应用/凡尔赛晨报/versailles-morning-gazette-v1.4.zip"
+      ],
+      "images": [
+        "资源/应用/凡尔赛晨报/1000093627.jpg",
+        "资源/应用/凡尔赛晨报/1000093643.jpg",
+        "资源/应用/凡尔赛晨报/1000093646.jpg"
+      ],
+      "description": "把你和角色的日常聊天，自动写成一份夸张又华丽的《凡尔赛晨报》。选择角色与视角，一键生成标题、正文、宫廷碎语、情报评级与今日判词；支持历史报刊留存与角色记忆，让每一次日常小事都像[粉]宫廷秘闻[/粉]一样值得登上头版。",
+      "author": "LwithZ",
+      "avatar": "资源/应用/凡尔赛晨报/.avatar.png",
+      "ownerHash": "3fa5d4b8a645483b397341996fd8240c49b89d41e275e38cf975dc0418149767",
+      "updatedAt": "2026-09-15T16:36:18+08:00"
     },
     {
       "folder": "应用",

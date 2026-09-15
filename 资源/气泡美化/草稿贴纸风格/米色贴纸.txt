@@ -1,0 +1,292 @@
+﻿/* ═══ 单独聊天室 CSS · 柔和草稿·文具风（低对比、护眼、燕麦色） ═══ */
+/* 作用范围：只影响当前聊天室，不影响其他页面。 */
+
+:root {
+  --c-paper: #F8F6F0;         /* 柔和的燕麦米色纸张 */
+  --c-ink: #3A3A3A;           /* 深灰色铅笔字（不再是纯黑） */
+  --c-pencil: #A8A29A;        /* 浅灰铅笔色 */
+  --c-grid: #EFEBE4;          /* 极浅的暖灰网格线 */
+  --c-shadow: #D1C9B8;        /* 柔和温暖的阴影色 */
+  --c-red-pen: #C85A54;       /* 柔和的砖红/玫瑰色（代替刺眼正红） */
+  
+  --c-bubble-self-text: #3A3A3A;
+  --c-bubble-other-text: #3A3A3A;
+  --c-text-title: #3A3A3A;
+  --c-text: #7A7A7A;
+  --c-icon: #B0B0B0;
+  --c-icon-active: var(--c-red-pen);
+  
+  --c-input: #FFFFFF;
+  --c-input-border: #C0C0C0;
+  --c-card: #FFFFFF;
+  --c-card-border: #C0C0C0;
+}
+
+/* ── 1. 草稿纸背景（柔和网格） ── */
+html, body, #app, .chat-room-wrapper, .chat-scroll-anchored, .page-body {
+  background-color: var(--c-paper) !important;
+  background-image: 
+    linear-gradient(var(--c-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--c-grid) 1px, transparent 1px) !important;
+  background-size: 20px 20px !important;
+}
+
+/* ── 标题栏 ── */
+.page-header {
+  background: rgba(248, 246, 240, 0.9) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 2px solid var(--c-ink);
+}
+.page-title, .page-back-btn {
+  color: var(--c-ink);
+  font-weight: 600;
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ── 消息列表与系统消息 ── */
+.chat-msg-wrapper { gap: 16px; } 
+.chat-sys-msg, .chat-time, .chat-date {
+  color: var(--c-red-pen) !important;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: calc(11px*var(--app-text-scale,1));
+  font-style: italic;
+  opacity: 0.85;
+}
+
+/* 系统指令注入卡片 */
+.chat-system-instruction-card {
+  background: var(--c-card);
+  border: 1.5px solid var(--c-ink);
+  border-radius: 0; 
+  box-shadow: 3px 3px 0 var(--c-shadow);
+}
+.chat-system-instruction-title { color: var(--c-ink); font-weight: 600; }
+.chat-system-instruction-body { color: var(--c-text); text-indent: 2em; }
+
+/* ── 2. 气泡（柔和纸张方块 + 温暖阴影） ── */
+.chat-bubble-role-user {
+  background: #FFFFFF;
+  color: var(--c-bubble-self-text);
+  border-radius: 0; 
+  border: 1.5px solid var(--c-ink);
+  padding: 14px 20px;
+  box-shadow: 3px 3px 0 var(--c-shadow); 
+}
+
+.chat-bubble-role-assistant {
+  background: #F1ECE1;
+  color: var(--c-bubble-other-text);
+  border: 1.5px solid var(--c-ink);
+  border-radius: 0; 
+  padding: 14px 20px;
+  box-shadow: 3px 3px 0 var(--c-shadow); 
+}
+
+.chat-markdown {
+  color: var(--c-text-title);
+  font-size: calc(15px*var(--app-text-scale,1));
+  line-height: 1.7;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 600; /* 降低字重 */
+}
+.chat-bubble-role-user .chat-markdown { color: var(--c-bubble-self-text); }
+.chat-bubble-role-assistant .chat-markdown { color: var(--c-bubble-other-text); }
+.chat-markdown p + p, .chat-markdown-paragraph + .chat-markdown-paragraph { margin-top: 10px; }
+.chat-bubble-media { border-radius: 0; overflow: hidden; border: 1.5px solid var(--c-ink); box-shadow: 3px 3px 0 var(--c-shadow); }
+
+/* ── 3. 头像（柔光相片胶带效果） ── */
+.chat-msg-avatar {
+  position: relative; 
+  border-radius: 0 !important; 
+  border: 1.5px solid var(--c-ink) !important; 
+  box-shadow: 3px 3px 0 var(--c-shadow) !important;
+  overflow: visible !important; 
+  z-index: 1; 
+  margin: 8px !important;
+  background: #FFFFFF !important; 
+}
+.chat-msg-avatar img {
+  border-radius: 0 !important; 
+  width: 100%; height: 100%; object-fit: cover;
+}
+/* 胶带效果（稍微降低透明度） */
+.chat-msg-avatar::before {
+  content: '' !important; 
+  display: block !important;
+  position: absolute; 
+  top: -10px; left: 50%; transform: translateX(-50%) rotate(-3deg);
+  width: 46px; height: 16px;
+  background: rgba(200, 195, 185, 0.55); /* 柔和的半透明胶带 */
+  border-left: 1px dashed rgba(0,0,0,0.1);
+  border-right: 1px dashed rgba(0,0,0,0.1);
+  z-index: 3;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.chat-msg-avatar::after { display: none !important; }
+
+/* ── 引用、编辑、长按菜单 ── */
+.chat-quote-bar, .chat-inline-edit-textarea {
+  background: #FFFFFF; border: 1.5px solid var(--c-input-border); border-radius: 0;
+}
+.chat-inline-edit-btn-save {
+  background: var(--c-ink); color: #FFF; border-radius: 0;
+  font-family: 'Courier New', monospace; font-weight: bold;
+  box-shadow: 3px 3px 0 var(--c-shadow);
+}
+.ctx-menu {
+  background: var(--c-paper); border: 1.5px solid var(--c-ink); border-radius: 0;
+  box-shadow: 4px 4px 0 var(--c-shadow);
+}
+.ctx-menu-btn { color: var(--c-ink); font-family: 'Courier New', monospace; font-weight: 600; }
+.ctx-menu-btn-danger { color: var(--c-red-pen); }
+
+/* ── 输入栏 ── */
+.chat-input-bar {
+  background: rgba(248, 246, 240, 0.9) !important;
+  border-top: 2px solid var(--c-ink);
+}
+.chat-input-textarea {
+  background: #FFFFFF; border: 1.5px solid var(--c-input-border);
+  color: var(--c-ink); font-size: calc(15px*var(--app-text-scale,1));
+  border-radius: 0; font-family: 'Courier New', Courier, monospace;
+  font-weight: 600; padding: 12px;
+  box-shadow: inset 2px 2px 0 rgba(0,0,0,0.02);
+}
+.chat-input-textarea:focus { border-color: var(--c-red-pen); outline: none; }
+.chat-input-actions { gap: 32px; justify-content: center; }
+
+/* ── 线下模式 ── */
+.chat-offline-toggle.chat-offline-active { color: var(--c-red-pen); font-weight: bold;}
+.chat-offline-body { padding: 16px 8px 24px; gap: 12px; }
+.chat-offline-empty, .chat-offline-time { color: var(--c-pencil); }
+.chat-offline-turn {
+  border-radius: 0; background: var(--c-paper);
+  border: 1.5px solid var(--c-ink); box-shadow: 3px 3px 0 var(--c-shadow);
+}
+.chat-offline-entry { padding: 10px 14px 10px 18px; }
+.chat-offline-entry + .chat-offline-entry { border-top: 1px solid var(--c-ink); }
+.chat-offline-entry[data-role="user"]::before { background: var(--c-ink); }
+.chat-offline-entry[data-role="assistant"]::before { background: var(--c-pencil); }
+.chat-offline-label { border-radius: 0; font-size: calc(12px*var(--app-text-scale,1)); font-weight: 700; font-family: 'Courier New', monospace;}
+.chat-offline-entry[data-role="user"] .chat-offline-label { color: #FFF; background: var(--c-ink); }
+.chat-offline-entry[data-role="assistant"] .chat-offline-label { color: #FFF; background: var(--c-pencil); }
+.chat-offline-text { color: var(--c-text); font-size: calc(14px*var(--app-text-scale,1)); line-height: 1.6; font-family: 'Courier New', monospace; font-weight: 600;}
+.chat-offline-entry[data-role="assistant"] .chat-offline-text { color: var(--c-ink); }
+.chat-offline-text[data-active] { background: rgba(200, 90, 84, 0.1); }
+.chat-offline-summary-fold { background: var(--c-paper); border-radius: 0; border: 1px solid var(--c-ink); }
+.chat-offline-summary-fold > summary, .chat-offline-summary-content, .chat-offline-generating { color: var(--c-pencil); }
+.chat-offline-summary-content { font-size: calc(13px*var(--app-text-scale,1)); line-height: 1.6; }
+
+/* ── 语音条 ── */
+.voice-msg-bubble { border-radius: 0; border: 1.5px solid var(--c-ink); box-shadow: 3px 3px 0 var(--c-shadow); }
+.voice-msg-icon { color: var(--c-red-pen); }
+.voice-msg-bar { background: var(--c-ink); }
+.voice-msg-bars[data-playing] .voice-msg-bar { background: var(--c-red-pen); }
+.voice-msg-dur { color: var(--c-ink); font-family: 'Courier New', monospace; font-weight: 600;}
+
+/* ── 4. 内心独白（柔和批改草稿纸） ── */
+.chat-thought-card {
+  background: #FFFFFF;
+  border: 1.5px solid var(--c-ink);
+  border-radius: 0; 
+  box-shadow: 4px 4px 0 var(--c-shadow);
+  padding: 24px 20px;
+  position: relative; 
+}
+.chat-thought-card::before {
+  content: ''; position: absolute; top: 8px; left: 8px; right: 8px; height: 1.5px;
+  background: var(--c-ink);
+}
+.chat-thought-card::after {
+  content: ''; 
+  position: absolute; bottom: 16px; right: 16px;
+  width: 30px; height: 2px;
+  background: var(--c-red-pen);
+  box-shadow: 0 0 0 2px #FFFFFF;
+}
+
+.chat-thought-title, .chat-thought-sig { 
+  color: var(--c-ink); font-weight: 700; letter-spacing: 2px; 
+  font-family: 'Courier New', Courier, monospace; text-transform: uppercase;
+}
+.chat-thought-body { 
+  color: var(--c-ink); line-height: 1.8; 
+  font-size: calc(15px*var(--app-text-scale,1)); 
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 600;
+}
+
+/* ★ 红笔心形（未激活：淡灰） */
+.chat-monologue-heart { 
+  color: #D0D0D0; text-shadow: none; transition: all 0.2s ease; 
+}
+/* ★ 红笔心形（已激活：柔和砖红） */
+.chat-monologue-heart[data-active] { 
+  color: var(--c-red-pen); text-shadow: 0 0 6px rgba(200, 90, 84, 0.3); 
+  transform: scale(1.15); 
+}
+
+/* ── 卡片消息 ── */
+.chat-red-packet-card, .chat-transfer-card, .chat-html-inline, .chat-music-share-card,
+.chat-location-card, .chat-media-file-card, .chat-gift-card, .chat-photo-card, .chat-xhs-share-card, .scan-pay-card, .chat-app-card {
+  background: #FFFFFF !important; border: 1.5px solid var(--c-ink) !important; border-radius: 0 !important;
+  box-shadow: 3px 3px 0 var(--c-shadow) !important;
+}
+.ui-media-footer { background: #F1ECE1; color: var(--c-ink); border-top: 1.5px solid var(--c-ink); }
+.ui-media-footer[data-status="declined"] { color: var(--c-pencil); }
+.chat-html-inline-frame { max-height: min(36vh, 340px); }
+.chat-music-share-title { color: var(--c-ink); font-weight: 700; }
+.chat-music-share-artist { color: var(--c-text); }
+.chat-location-label { background: #F1ECE1; color: var(--c-ink); }
+.chat-sticker { border-radius: 0; }
+/* ★ 表情包：原色，柔和边框和阴影 */
+.chat-sticker-image img { 
+  width: 120px; height: 120px; 
+  border: 1.5px solid var(--c-ink);
+  box-shadow: 3px 3px 0 var(--c-shadow);
+  background: #FFF;
+}
+.chat-sticker-fallback { background: #F1ECE1; color: var(--c-ink); }
+.chat-quote-preview { background: #F1ECE1; border-left: 3px solid var(--c-red-pen); color: var(--c-ink); border-radius: 0; }
+.chat-media-file-title { color: var(--c-ink); font-weight: 700; }
+.chat-media-file-time, .chat-media-file-save { color: var(--c-text); }
+.chat-media-file-play, .chat-media-file-progress-fill { background: var(--c-red-pen); }
+.chat-gift-card-status { background: #F1ECE1; color: var(--c-ink); }
+.chat-gift-card-title { color: var(--c-ink); font-size: calc(24px*var(--app-text-scale,1)); font-weight: bold;}
+.chat-gift-card-divider { background: var(--c-ink); height: 1.5px;}
+.chat-gift-card-footer { border-top: 1.5px solid var(--c-ink); }
+.chat-gift-card-cell-label, .chat-gift-card-kicker, .chat-gift-card-label, .chat-gift-card-brand { color: var(--c-text); }
+.chat-gift-card-cell-value, .chat-gift-card-source { color: var(--c-ink); }
+.chat-photo-card-text { color: var(--c-ink); font-family: 'Courier New', monospace; font-size: calc(14px*var(--app-text-scale,1)); font-style: italic; text-align: center; }
+.chat-photo-card--image { background: transparent !important; border: none !important; box-shadow: none !important; }
+.chat-photo-card--image .chat-photo-card-image { object-fit: contain; }
+.chat-xhs-share-title { color: var(--c-ink); font-weight: bold; }
+.chat-xhs-share-head, .chat-xhs-share-author, .chat-xhs-share-desc { color: var(--c-text); }
+.chat-xhs-share-mark { background: var(--c-red-pen); color: #FFF; border-radius: 0; }
+.chat-xhs-share-cover { border-radius: 0; }
+.chat-xhs-share-tags span { color: var(--c-red-pen); background: rgba(200, 90, 84, 0.1); }
+.scan-pay-title { color: var(--c-ink); font-weight: bold; }
+.scan-pay-qr { border-radius: 0; }
+.scan-pay-hint { color: var(--c-text); }
+.scan-pay-btn { border-radius: 0; }
+.scan-pay-btn-primary { background: var(--c-ink); color: #FFF; font-weight: bold; }
+
+.chat-app-card {
+  --cac-ink: #3A3A3A; --cac-ink-soft: #7A7A7A; --cac-ink-mute: #B0B0B0;
+  --cac-line: #3A3A3A; --cac-dash: #B0B0B0;
+}
+.chat-app-card-title { font-weight: bold; color: var(--c-ink);}
+.chat-app-card-section-title { background: var(--c-ink); color: #FFF; }
+.chat-app-card-actions button:last-child:not([data-style="danger"]) { background: var(--c-ink); color: #FFF; }
+
+/* ── 状态值面板 ── */
+.state-panel { background: #F1ECE1 !important; border-radius: 0 !important; border: 1.5px solid var(--c-ink) !important; }
+.state-bar-track { height: 8px !important; border-radius: 0 !important; background: #FFF !important; border: 1.5px solid var(--c-ink) !important; }
+.state-bar-fill { background: var(--c-ink) !important; }
+
+/* ── 高级：自定义字体 ── */
+/* @import url("https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap"); */
+/* * { font-family: "ZCOOL KuaiLe", sans-serif; } */

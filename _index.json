@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-15T04:47:06.027Z",
+  "generatedAt": "2026-09-15T05:12:33.859Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -767,6 +767,7 @@
       "type": "dir",
       "path": "资源/Js插件/翻译悬浮球",
       "files": [
+        "资源/Js插件/翻译悬浮球/翻译2.0.js",
         "资源/Js插件/翻译悬浮球/翻译悬浮球.js"
       ],
       "images": [
@@ -777,7 +778,7 @@
       "author": "糯米团子",
       "avatar": "资源/Js插件/翻译悬浮球/.avatar.png",
       "ownerHash": "ede8199ada8254a22c3c124c5e367a30a98e15e62456b916541c8f03bc4af34b",
-      "updatedAt": "2026-09-14T22:02:18+08:00"
+      "updatedAt": "2026-09-15T13:11:51+08:00"
     },
     {
       "folder": "Js插件",

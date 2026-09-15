@@ -1,5 +1,9 @@
 const PLUGIN_ID = "float-interface-skins";
 const STORAGE_KEY = "state-v3";
+const LIVE_STYLE_DB_NAME = "FloatInterfaceSkinsDB";
+const LIVE_STYLE_STORE_NAME = "settings";
+const LIVE_STYLE_RECORD_ID = "live-styles-v1";
+const LIVE_STYLE_FALLBACK_KEY = `${PLUGIN_ID}:${LIVE_STYLE_RECORD_ID}`;
 const MAX_FONT_FILE_BYTES = 25 * 1024 * 1024;
 
 const REGION_DEFS = [
@@ -47,6 +51,35 @@ const INPUT_STYLE_TARGETS = [
   ["formInput", "联系人"],
 ];
 
+const AVATAR_TARGETS = [
+  ["me", "主页"],
+  ["feeds", "动态"],
+  ["contacts", "联系人"],
+  ["messages", "消息"],
+  ["chatRoom", "聊天"],
+];
+
+const ONLINE_TOOLBAR_ICON_DEFS = [
+  ["offline", "位置"],
+  ["emoji", "表情"],
+  ["plus", "加号"],
+  ["send", "发送"],
+  ["generate", "星星"],
+];
+const OFFLINE_TOOLBAR_ICON_DEFS = [
+  ["offlineReturn", "返回线上"],
+  ["offlineEmoji", "线下表情"],
+  ["offlineSend", "线下发送"],
+];
+const TOOLBAR_ICON_DEFS = [...ONLINE_TOOLBAR_ICON_DEFS, ...OFFLINE_TOOLBAR_ICON_DEFS];
+const toolbarIconSuffix = key => key.replace(/[A-Z]/g, letter => "-" + letter.toLowerCase());
+
+function makeToolbarIconSettings() {
+  const items = {};
+  for (const [key] of TOOLBAR_ICON_DEFS) items[key] = { visible: true, offsetX: 0, offsetY: 0 };
+  return items;
+}
+
 function colorRuleId() {
   return "color-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 7);
 }
@@ -61,7 +94,7 @@ function fontRuleId() {
 
 function themeSnapshot(source) {
   return JSON.parse(JSON.stringify({
-    version: 36,
+    version: 53,
     colorsEnabled: source.colorsEnabled,
     imagesEnabled: source.imagesEnabled,
     baseStyle: source.baseStyle,
@@ -69,6 +102,10 @@ function themeSnapshot(source) {
     inputStyle: source.inputStyle,
     buttonStyle: source.buttonStyle,
     interfaceStyle: source.interfaceStyle,
+    avatarStyle: source.avatarStyle,
+    thoughtStyle: source.thoughtStyle,
+    translationStyle: source.translationStyle,
+    toolbarStyle: source.toolbarStyle,
     fontsEnabled: source.fontsEnabled,
     fontRules: source.fontRules,
     regions: source.regions,
@@ -101,7 +138,7 @@ function defaultState() {
   const regions = {};
   for (const def of REGION_DEFS) regions[def.key] = makeRegion(def);
   return {
-    version: 36,
+    version: 53,
     colorsEnabled: true,
     imagesEnabled: true,
     floatingButtonEnabled: true,
@@ -120,6 +157,9 @@ function defaultState() {
       borderless: false,
       borderWidth: 1,
       chatWidth: 100,
+      positionEnabled: false,
+      offsetX: 0,
+      offsetY: 0,
       borderColor: "#dadbdf",
       backgroundMode: "color",
       backgroundColor: "#ebecef",
@@ -147,11 +187,81 @@ function defaultState() {
       backgroundColor: "#ffffff",
       backgroundOpacity: 100,
     },
+    avatarStyle: {
+      enabled: false,
+      radius: 50,
+      applyTargets: AVATAR_TARGETS.map(([key]) => key),
+      headerAvatarVisible: false,
+      headerUserAvatarVisible: false,
+      headerTitleAlign: "center",
+      headerAvatarSize: 28,
+      headerAvatarOffsetX: 0,
+      headerAvatarOffsetY: -24,
+      headerUserAvatarOffsetX: 42,
+      headerUserAvatarOffsetY: 0,
+      chatUserVisible: true,
+      chatRoleVisible: true,
+      borderEnabled: false,
+      borderWidth: 1,
+      borderColor: "#ffffff",
+    },
+    thoughtStyle: {
+      enabled: false,
+      backgroundColor: "#fdf3e0",
+      backgroundOpacity: 100,
+      radius: 12,
+      titleColor: "#c9a96e",
+      textColor: "#5a4a3a",
+      borderVisible: true,
+      borderWidth: 1,
+      borderColor: "#deb887",
+      tapeVisible: true,
+      tapeLeftColor: "#ffb6c1",
+      tapeRightColor: "#add8e6",
+      valueTrackColor: "#eadfce",
+      valueFillColor: "#a17fc0",
+      iconColor: "#a58be8",
+      iconOffsetX: 0,
+      iconOffsetY: 0,
+    },
+    translationStyle: {
+      enabled: false,
+      alwaysVisible: true,
+      layoutMode: "outside",
+      dividerVisible: false,
+      bold: true,
+      color: "#163b8f",
+      shadowEnabled: true,
+      shadowColor: "#ffffff",
+      backgroundEnabled: false,
+      backgroundColor: "#ffffff",
+      backgroundRadius: 8,
+      size: 100,
+      offsetX: 0,
+      offsetY: 0,
+      voiceBackgroundEnabled: false,
+      voiceBackgroundColor: "#ffffff",
+      voiceBackgroundRadius: 8,
+      voiceOffsetX: 0,
+      voiceOffsetY: 0,
+    },
+    toolbarStyle: {
+      enabled: true,
+      mergeExpressions: true,
+      hideBuiltinEmojis: false,
+      items: makeToolbarIconSettings(),
+    },
     fontsEnabled: true,
     fontRules: [],
     colorRules: [{ id: colorRuleId(), color: "#8f76b8", targets: [] }],
     regions,
     themes: {},
+    dayNightSchedule: {
+      enabled: false,
+      dayThemeId: "",
+      nightThemeId: "",
+      fallbackSnapshot: null,
+    },
   };
 }
 
@@ -185,6 +295,9 @@ function normalizeState(raw) {
     state.inputStyle.borderless = raw.inputStyle.borderless === true;
     state.inputStyle.borderWidth = clamp(raw.inputStyle.borderWidth, 1, 0.5, 6);
     state.inputStyle.chatWidth = clamp(raw.inputStyle.chatWidth, 100, 40, 100);
+    state.inputStyle.positionEnabled = raw.inputStyle.positionEnabled === true;
+    state.inputStyle.offsetX = clamp(raw.inputStyle.offsetX, 0, -120, 120);
+    state.inputStyle.offsetY = clamp(raw.inputStyle.offsetY, 0, -120, 120);
     state.inputStyle.borderColor = /^#[0-9a-f]{6}$/i.test(String(raw.inputStyle.borderColor || "")) ? String(raw.inputStyle.borderColor).toLowerCase() : "#dadbdf";
     state.inputStyle.backgroundColor = /^#[0-9a-f]{6}$/i.test(String(raw.inputStyle.backgroundColor || "")) ? String(raw.inputStyle.backgroundColor).toLowerCase() : "#ebecef";
     state.inputStyle.backgroundOpacity = clamp(raw.inputStyle.backgroundOpacity, 100, 0, 100);
@@ -217,6 +330,86 @@ function normalizeState(raw) {
     state.interfaceStyle.borderColor = /^#[0-9a-f]{6}$/i.test(String(raw.interfaceStyle.borderColor || "")) ? String(raw.interfaceStyle.borderColor).toLowerCase() : "#dadbdf";
     state.interfaceStyle.backgroundColor = /^#[0-9a-f]{6}$/i.test(String(raw.interfaceStyle.backgroundColor || "")) ? String(raw.interfaceStyle.backgroundColor).toLowerCase() : "#ffffff";
     state.interfaceStyle.backgroundOpacity = clamp(raw.interfaceStyle.backgroundOpacity, 100, 0, 100);
+  }
+  if (raw.avatarStyle && typeof raw.avatarStyle === "object") {
+    state.avatarStyle.enabled = raw.avatarStyle.enabled === true;
+    state.avatarStyle.radius = clamp(raw.avatarStyle.radius, 50, 0, 50);
+    state.avatarStyle.headerAvatarVisible = raw.avatarStyle.headerAvatarVisible === true;
+    state.avatarStyle.headerUserAvatarVisible = raw.avatarStyle.headerUserAvatarVisible === true;
+    state.avatarStyle.headerTitleAlign = raw.avatarStyle.headerTitleAlign === "left" ? "left" : "center";
+    state.avatarStyle.headerAvatarSize = clamp(raw.avatarStyle.headerAvatarSize, 28, 20, 40);
+    state.avatarStyle.headerAvatarOffsetX = clamp(raw.avatarStyle.headerAvatarOffsetX, 0, -400, 400);
+    state.avatarStyle.headerAvatarOffsetY = clamp(raw.avatarStyle.headerAvatarOffsetY, -24, -160, 160);
+    state.avatarStyle.headerUserAvatarOffsetX = clamp(raw.avatarStyle.headerUserAvatarOffsetX, 42, -400, 400);
+    state.avatarStyle.headerUserAvatarOffsetY = clamp(raw.avatarStyle.headerUserAvatarOffsetY, 0, -160, 160);
+    state.avatarStyle.chatUserVisible = raw.avatarStyle.chatUserVisible !== false;
+    state.avatarStyle.chatRoleVisible = raw.avatarStyle.chatRoleVisible !== false;
+    state.avatarStyle.borderEnabled = raw.avatarStyle.borderEnabled === true;
+    state.avatarStyle.borderWidth = clamp(raw.avatarStyle.borderWidth, 1, 0, 8);
+    state.avatarStyle.borderColor = /^#[0-9a-f]{6}$/i.test(String(raw.avatarStyle.borderColor || "")) ? String(raw.avatarStyle.borderColor).toLowerCase() : "#ffffff";
+    if (Array.isArray(raw.avatarStyle.applyTargets)) {
+      const allowed = AVATAR_TARGETS.map(([key]) => key);
+      state.avatarStyle.applyTargets = [...new Set(raw.avatarStyle.applyTargets.filter(key => allowed.includes(key)))];
+    }
+  }
+  if (raw.thoughtStyle && typeof raw.thoughtStyle === "object") {
+    state.thoughtStyle.enabled = raw.thoughtStyle.enabled === true;
+    state.thoughtStyle.backgroundColor = /^#[0-9a-f]{6}$/i.test(String(raw.thoughtStyle.backgroundColor || "")) ? String(raw.thoughtStyle.backgroundColor).toLowerCase() : "#fdf3e0";
+    state.thoughtStyle.backgroundOpacity = clamp(raw.thoughtStyle.backgroundOpacity, 100, 0, 100);
+    state.thoughtStyle.radius = clamp(raw.thoughtStyle.radius, 12, 0, 50);
+    state.thoughtStyle.titleColor = /^#[0-9a-f]{6}$/i.test(String(raw.thoughtStyle.titleColor || "")) ? String(raw.thoughtStyle.titleColor).toLowerCase() : "#c9a96e";
+    state.thoughtStyle.textColor = /^#[0-9a-f]{6}$/i.test(String(raw.thoughtStyle.textColor || "")) ? String(raw.thoughtStyle.textColor).toLowerCase() : "#5a4a3a";
+    state.thoughtStyle.borderVisible = raw.thoughtStyle.borderVisible !== false;
+    state.thoughtStyle.borderWidth = clamp(raw.thoughtStyle.borderWidth, 1, 0.5, 8);
+    state.thoughtStyle.borderColor = /^#[0-9a-f]{6}$/i.test(String(raw.thoughtStyle.borderColor || "")) ? String(raw.thoughtStyle.borderColor).toLowerCase() : "#deb887";
+    state.thoughtStyle.tapeVisible = raw.thoughtStyle.tapeVisible !== false;
+    state.thoughtStyle.tapeLeftColor = /^#[0-9a-f]{6}$/i.test(String(raw.thoughtStyle.tapeLeftColor || "")) ? String(raw.thoughtStyle.tapeLeftColor).toLowerCase() : "#ffb6c1";
+    state.thoughtStyle.tapeRightColor = /^#[0-9a-f]{6}$/i.test(String(raw.thoughtStyle.tapeRightColor || "")) ? String(raw.thoughtStyle.tapeRightColor).toLowerCase() : "#add8e6";
+    state.thoughtStyle.valueTrackColor = /^#[0-9a-f]{6}$/i.test(String(raw.thoughtStyle.valueTrackColor || "")) ? String(raw.thoughtStyle.valueTrackColor).toLowerCase() : "#eadfce";
+    state.thoughtStyle.valueFillColor = /^#[0-9a-f]{6}$/i.test(String(raw.thoughtStyle.valueFillColor || "")) ? String(raw.thoughtStyle.valueFillColor).toLowerCase() : "#a17fc0";
+    state.thoughtStyle.iconColor = /^#[0-9a-f]{6}$/i.test(String(raw.thoughtStyle.iconColor || "")) ? String(raw.thoughtStyle.iconColor).toLowerCase() : "#a58be8";
+    state.thoughtStyle.iconOffsetX = clamp(raw.thoughtStyle.iconOffsetX, 0, -400, 400);
+    state.thoughtStyle.iconOffsetY = clamp(raw.thoughtStyle.iconOffsetY, 0, -160, 160);
+  }
+  if (raw.translationStyle && typeof raw.translationStyle === "object") {
+    state.translationStyle.enabled = raw.translationStyle.enabled === true;
+    state.translationStyle.alwaysVisible = raw.translationStyle.alwaysVisible !== false;
+    state.translationStyle.layoutMode = raw.translationStyle.layoutMode === "inside" ? "inside" : "outside";
+    state.translationStyle.dividerVisible = raw.translationStyle.dividerVisible === true;
+    state.translationStyle.bold = raw.translationStyle.bold !== false;
+    state.translationStyle.color = /^#[0-9a-f]{6}$/i.test(String(raw.translationStyle.color || "")) ? String(raw.translationStyle.color).toLowerCase() : "#163b8f";
+    state.translationStyle.shadowEnabled = raw.translationStyle.shadowEnabled !== false;
+    state.translationStyle.shadowColor = /^#[0-9a-f]{6}$/i.test(String(raw.translationStyle.shadowColor || "")) ? String(raw.translationStyle.shadowColor).toLowerCase() : "#ffffff";
+    state.translationStyle.backgroundEnabled = raw.translationStyle.backgroundEnabled === true;
+    state.translationStyle.backgroundColor = /^#[0-9a-f]{6}$/i.test(String(raw.translationStyle.backgroundColor || "")) ? String(raw.translationStyle.backgroundColor).toLowerCase() : "#ffffff";
+    state.translationStyle.backgroundRadius = clamp(raw.translationStyle.backgroundRadius, 8, 0, 50);
+    state.translationStyle.size = clamp(raw.translationStyle.size, 100, 60, 160);
+    state.translationStyle.offsetX = clamp(raw.translationStyle.offsetX, 0, -400, 400);
+    state.translationStyle.offsetY = clamp(raw.translationStyle.offsetY, 0, -160, 160);
+    state.translationStyle.voiceBackgroundEnabled = raw.translationStyle.voiceBackgroundEnabled === true;
+    state.translationStyle.voiceBackgroundColor = /^#[0-9a-f]{6}$/i.test(String(raw.translationStyle.voiceBackgroundColor || "")) ? String(raw.translationStyle.voiceBackgroundColor).toLowerCase() : "#ffffff";
+    state.translationStyle.voiceBackgroundRadius = clamp(raw.translationStyle.voiceBackgroundRadius, 8, 0, 50);
+    state.translationStyle.voiceOffsetX = clamp(raw.translationStyle.voiceOffsetX, 0, -400, 400);
+    state.translationStyle.voiceOffsetY = clamp(raw.translationStyle.voiceOffsetY, 0, -160, 160);
+  }
+  if (raw.toolbarStyle && typeof raw.toolbarStyle === "object") {
+    state.toolbarStyle.enabled = raw.toolbarStyle.enabled !== false;
+    state.toolbarStyle.mergeExpressions = raw.toolbarStyle.mergeExpressions !== false;
+    state.toolbarStyle.hideBuiltinEmojis = raw.toolbarStyle.hideBuiltinEmojis === true;
+    const sourceItems = raw.toolbarStyle.items && typeof raw.toolbarStyle.items === "object" ? raw.toolbarStyle.items : {};
+    for (const [key] of TOOLBAR_ICON_DEFS) {
+      const source = sourceItems[key];
+      if (!source || typeof source !== "object") continue;
+      state.toolbarStyle.items[key].visible = source.visible !== false;
+      state.toolbarStyle.items[key].offsetX = clamp(source.offsetX, 0, -400, 400);
+      state.toolbarStyle.items[key].offsetY = clamp(source.offsetY, 0, -120, 120);
+    }
+    for (const [offlineKey, onlineKey] of [["offlineReturn", "offline"], ["offlineEmoji", "emoji"], ["offlineSend", "send"]]) {
+      if (sourceItems[offlineKey] && typeof sourceItems[offlineKey] === "object") continue;
+      state.toolbarStyle.items[offlineKey].visible = true;
+      state.toolbarStyle.items[offlineKey].offsetX = state.toolbarStyle.items[onlineKey].offsetX;
+      state.toolbarStyle.items[offlineKey].offsetY = state.toolbarStyle.items[onlineKey].offsetY;
+    }
   }
   if (Array.isArray(raw.fontRules)) {
     state.fontRules = raw.fontRules.slice(0, 10).map(rule => ({
@@ -295,6 +488,15 @@ function normalizeState(raw) {
       };
     }
   }
+  if (raw.dayNightSchedule && typeof raw.dayNightSchedule === "object") {
+    const source = raw.dayNightSchedule;
+    state.dayNightSchedule.enabled = source.enabled === true;
+    state.dayNightSchedule.dayThemeId = state.themes[String(source.dayThemeId || "")] ? String(source.dayThemeId) : "";
+    state.dayNightSchedule.nightThemeId = state.themes[String(source.nightThemeId || "")] ? String(source.nightThemeId) : "";
+    if (source.fallbackSnapshot && typeof source.fallbackSnapshot === "object") {
+      state.dayNightSchedule.fallbackSnapshot = themeSnapshot(normalizeState({ ...source.fallbackSnapshot, themes: {}, dayNightSchedule: undefined }));
+    }
+  }
   return state;
 }
 
@@ -348,6 +550,7 @@ const BASE_CSS = `
 .fis-panel{display:block;padding:10px;border-top:1px solid #e7ebf0}.fis-row{display:grid;grid-template-columns:74px minmax(0,1fr);align-items:center;gap:8px;margin:8px 0}.fis-label{font-size:11px;color:#68788d}.fis-file-row{display:flex;align-items:center;gap:7px;min-width:0}.fis-file-name{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:#68788d}.fis-select,.fis-number{width:100%;min-height:34px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#334155;padding:6px 8px;font-size:12px}.fis-range-pair{display:grid;grid-template-columns:minmax(0,1fr) 58px;gap:7px;align-items:center}.fis-range{width:100%;height:4px;margin:8px 0;border:0;border-radius:999px;outline:0;appearance:none;-webkit-appearance:none;accent-color:#6f8fb5;background:linear-gradient(to right,#6f8fb5 0 var(--fis-range-progress,50%),#d7e0ea var(--fis-range-progress,50%) 100%)!important}.fis-range::-webkit-slider-runnable-track{height:4px;border:0;border-radius:999px;background:transparent}.fis-range::-webkit-slider-thumb{width:16px;height:16px;margin-top:-6px;border:2px solid #fff;border-radius:50%;background:#6f8fb5;box-shadow:0 1px 4px rgba(50,75,105,.28);appearance:none;-webkit-appearance:none}.fis-range::-moz-range-track{height:4px;border:0;border-radius:999px;background:#d7e0ea}.fis-range::-moz-range-progress{height:4px;border-radius:999px;background:#6f8fb5}.fis-range::-moz-range-thumb{width:14px;height:14px;border:2px solid #fff;border-radius:50%;background:#6f8fb5;box-shadow:0 1px 4px rgba(50,75,105,.28)}.fis-empty{padding:13px 4px;text-align:center;color:#8a98a9;font-size:11px}.fis-input-targets{display:flex;align-items:center;gap:7px 12px;flex-wrap:wrap;padding:7px 9px;border:1px solid #d7e0ea;border-radius:8px;background:#fff}.fis-input-target{display:flex;align-items:center;gap:5px;font-size:11px;color:#607086;white-space:nowrap}
 .fis-input-style-card{padding:10px;border:1px solid rgba(120,140,165,.2);border-radius:11px;background:rgba(255,255,255,.82)}.fis-input-style-head{display:flex;align-items:center;gap:7px;margin-bottom:8px}.fis-input-style-body.disabled{opacity:.55}.fis-color-pair{display:grid;grid-template-columns:42px minmax(0,1fr);gap:7px;align-items:center}.fis-color-pair input[type=color]{width:42px;height:34px;padding:2px;border:1px solid #cbd5e1;border-radius:8px;background:#fff}.fis-color-pair .fis-number{text-transform:uppercase}
 .fis-theme-list{display:flex;flex-direction:column;gap:8px}.fis-theme-card{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;padding:10px;border:1px solid rgba(120,140,165,.2);border-radius:11px;background:rgba(255,255,255,.82)}.fis-theme-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:650}.fis-theme-hint{margin-top:2px;color:#8a98a9;font-size:10px}.fis-theme-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}@media(max-width:560px){.fis-theme-card{grid-template-columns:1fr}.fis-theme-actions{justify-content:flex-start}}
+.fis-day-night-dialog{display:flex;flex-direction:column;gap:8px;margin-top:10px}.fis-day-night-dialog .fis-row{grid-template-columns:42px minmax(0,1fr);margin:3px 0}.fis-day-night-dialog .fis-switch-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:5px 0 9px;border-bottom:1px solid rgba(182,161,203,.25)}.fis-day-night-hint{color:#897b96;font-size:10px;line-height:1.45}
 .fis-subtab-bar{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;min-width:0;border-bottom:1px solid rgba(120,140,165,.24)}.fis-subtab-strip{display:flex;align-items:flex-end;gap:6px;min-width:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}.fis-subtab-strip::-webkit-scrollbar{display:none}.fis-subtab-switch{display:flex;align-items:center;justify-content:center;flex:0 0 auto;height:48px;padding:0 5px 8px}.fis-switch{position:relative;display:inline-flex;width:46px;height:26px;cursor:pointer}.fis-switch input{position:absolute;width:1px;height:1px;opacity:0}.fis-switch-track{position:absolute;inset:0;border-radius:999px;background:#cbd5e1;transition:background .18s}.fis-switch-track::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(43,58,78,.24);transition:transform .18s}.fis-switch input:checked+.fis-switch-track{background:#6f8fb5}.fis-switch input:checked+.fis-switch-track::after{transform:translateX(20px)}.fis-color-workspace.disabled>.fis-color-panel,.fis-color-workspace.disabled>.fis-color-actions{opacity:.55}.fis-color-tabs{flex-wrap:wrap;overflow:visible}.fis-color-tab{position:relative;display:grid;place-items:center;flex:0 0 42px;width:42px;height:44px;padding:4px 4px 0;border:1px solid transparent;border-bottom:0;border-radius:10px 10px 0 0;background:transparent;cursor:pointer}.fis-color-tab.active{z-index:1;border-color:rgba(120,140,165,.24);background:rgba(255,255,255,.9);margin-bottom:-1px}.fis-color-heart{font-size:28px;line-height:1;color:var(--fis-heart-color);text-shadow:0 1px 1px rgba(45,55,72,.08)}.fis-color-tab-mark{display:none;position:absolute;right:1px;top:2px;width:15px;height:15px;align-items:center;justify-content:center;border:1px solid #b8c4d1;border-radius:50%;background:#fff;color:#fff;font-size:9px}.fis-color-tabs.delete-mode .fis-color-tab-mark{display:inline-flex}.fis-color-tab.selected .fis-color-tab-mark{border-color:#b42318;background:#b42318}.fis-color-tab.selected{background:rgba(180,35,24,.05)}.fis-color-panel{padding:14px;border:1px solid rgba(120,140,165,.24);border-top:0;border-radius:0 0 11px 11px;background:rgba(255,255,255,.82)}.fis-color-actions{display:flex;align-items:center;justify-content:center;gap:7px;padding-top:9px}.fis-inline-color-editor{display:grid;grid-template-columns:38px minmax(90px,150px);align-items:center;gap:8px;margin-bottom:7px}.fis-inline-color-editor input[type=color]{width:38px;height:34px;padding:2px;border:1px solid #cbd5e1;border-radius:8px;background:#fff}.fis-inline-color-editor input[type=text]{width:100%;min-height:34px;padding:6px 8px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#52677f;font-size:11px;text-transform:uppercase}.fis-target-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 8px}.fis-target-option{display:flex;align-items:center;gap:5px;min-width:0;padding:4px 2px;font-size:11px;color:#607086}.fis-target-option span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fis-image-workspace.disabled>.fis-region{opacity:.55}.fis-image-tab{flex:0 0 auto;min-height:40px;padding:8px 14px;border:1px solid transparent;border-bottom:0;border-radius:11px 11px 0 0;background:transparent;color:#607086;font-size:12px;cursor:pointer}.fis-image-tab.active{z-index:1;border-color:rgba(120,140,165,.24);background:rgba(255,255,255,.9);margin-bottom:-1px;color:#42566f}.fis-image-workspace>.fis-region{margin:0;border-top:0;border-radius:0 0 11px 11px}
 .fis-font-tabs{flex-wrap:wrap;overflow:visible}.fis-font-tab{display:block;max-width:120px;min-height:40px;padding:8px 12px;border:1px solid transparent;border-bottom:0;border-radius:10px 10px 0 0;background:transparent;color:#607086;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}.fis-font-tab.active{z-index:1;margin-bottom:-1px;border-color:rgba(120,140,165,.24);background:rgba(255,255,255,.9);color:#42566f}
 .fis-interface-workspace>.fis-subtab-bar{padding:0;border:0;border-bottom:1px solid rgba(120,140,165,.24);border-radius:0;background:transparent}.fis-interface-workspace>.fis-input-style-card{padding-top:10px;padding-bottom:10px;border-top:0;border-radius:0 0 11px 11px}.fis-interface-workspace>.fis-input-style-card>.fis-row:first-child{margin-top:0}.fis-interface-workspace>.fis-input-style-card>.fis-input-feature:first-child{margin-top:0}.fis-interface-workspace .fis-card-feature{border:0;border-radius:0;background:transparent}
@@ -448,6 +651,8 @@ html[data-fis-view-scope="1"][data-fis-color-meta-text="1"] .chat-app:not([data-
 html[data-fis-view-scope="1"][data-fis-color-meta-text="1"] .chat-app .chat-bilingual-toggle,
 html[data-fis-view-scope="1"][data-fis-color-meta-text="1"] .chat-app .chat-bilingual-section-translation,
 html[data-fis-view-scope="1"][data-fis-color-meta-text="1"] .chat-app .chat-bilingual-section-translation .chat-markdown,
+html[data-fis-view-scope="1"][data-fis-color-meta-text="1"] .chat-app .chat-quote-bar>div:first-child,
+html[data-fis-view-scope="1"][data-fis-color-meta-text="1"] .chat-app .chat-quote-preview,
 html[data-fis-view-scope="1"][data-fis-color-meta-text="1"] .chat-app .feed-inline-translation{color:var(--fis-color-meta-text)!important}
 
 /* 普通图标只处理明确的图标容器，不再借 --c-icon 影响时间、分类和说明文字。 */
@@ -535,7 +740,7 @@ html[data-fis-base-color="1"][data-fis-base-target-chat-room="1"] .chat-app .cha
 html[data-fis-base-color="1"][data-fis-base-target-messages="1"] .chat-app .page-shell:has(.chat-list-tabs)>.page-header,
 html[data-fis-base-color="1"][data-fis-base-target-contacts="1"] .chat-app .page-shell:has(input[placeholder='Search contacts...'],.contacts-page-root)>.page-header{--c-header-bg:var(--fis-base-glass)!important;background:var(--fis-base-glass)!important;backdrop-filter:blur(18px) saturate(1.12)!important;-webkit-backdrop-filter:blur(18px) saturate(1.12)!important}
 html[data-fis-base-color="1"][data-fis-base-target-chat-room="1"]:not([data-fis-bottom-image-input="1"]) .chat-app .chat-room-wrapper .chat-input-bar,
-html[data-fis-base-color="1"][data-fis-base-target-chat-room="1"][data-fis-bottom-image-input="1"] .chat-app .chat-room-wrapper .chat-input-bar:has(.chat-plus-menu){background:var(--fis-base-glass)!important;backdrop-filter:blur(18px) saturate(1.12)!important;-webkit-backdrop-filter:blur(18px) saturate(1.12)!important}
+html[data-fis-base-color="1"][data-fis-base-target-chat-room="1"][data-fis-bottom-image-input="1"] .chat-app .chat-room-wrapper .chat-input-bar:is(:has(.chat-plus-menu),:has(>[class~="h-[220px]"])){background:var(--fis-base-glass)!important;backdrop-filter:blur(18px) saturate(1.12)!important;-webkit-backdrop-filter:blur(18px) saturate(1.12)!important}
 html[data-fis-view-scope="1"][data-fis-active-view="messages"][data-fis-base-target-messages="1"]:not([data-fis-bottom-image-tab="1"]) .chat-app .chat-tab-bar,
 html[data-fis-view-scope="1"][data-fis-active-view="contacts"][data-fis-base-target-contacts="1"]:not([data-fis-bottom-image-tab="1"]) .chat-app .chat-tab-bar,
 html[data-fis-view-scope="1"][data-fis-active-view="feeds"][data-fis-base-target-feeds="1"]:not([data-fis-bottom-image-tab="1"]) .chat-app .chat-tab-bar,
@@ -559,17 +764,128 @@ html[data-fis-view-scope="1"][data-fis-top-target-messages="1"] .chat-app .page-
 html[data-fis-view-scope="1"][data-fis-top-target-contacts="1"] .chat-app .page-shell:has(input[placeholder='Search contacts...'])>.page-header,
 html[data-fis-view-scope="1"][data-fis-top-target-feeds="1"] .chat-app .page-shell:has(.feed-cover-shell)>.page-header,
 html[data-fis-view-scope="1"][data-fis-top-target-me="1"] .chat-app .user-profile-page-root>.page-header,
-html[data-fis-view-scope="1"][data-fis-bottom-image-input="1"] .chat-app .chat-room-wrapper .chat-input-bar:not(:has(.chat-plus-menu)),
+html[data-fis-view-scope="1"][data-fis-bottom-image-input="1"] .chat-app .chat-room-wrapper .chat-input-bar:not(:has(.chat-plus-menu)):not(:has(>[class~="h-[220px]"])),
 html[data-fis-view-scope="1"][data-fis-bottom-image-tab="1"] .chat-app .chat-tab-bar{isolation:isolate;overflow:visible!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-html[data-fis-view-scope="1"][data-fis-bottom-image-input="1"] .chat-app .chat-room-wrapper .chat-input-bar:not(:has(.chat-plus-menu)){border-top:0!important;border-top-color:transparent!important}
+html[data-fis-view-scope="1"][data-fis-bottom-image-input="1"] .chat-app .chat-room-wrapper .chat-input-bar:not(:has(.chat-plus-menu)):not(:has(>[class~="h-[220px]"])){border-top:0!important;border-top-color:transparent!important}
 html[data-fis-view-scope="1"][data-fis-bottom-image-tab="1"] .chat-app .chat-tab-bar{border-top:0!important;border-top-color:transparent!important}
 html[data-fis-view-scope="1"][data-fis-top-target-chat-room="1"] .chat-app .chat-room-wrapper>.page-header::before,
 html[data-fis-view-scope="1"][data-fis-top-target-messages="1"] .chat-app .page-shell:has(.chat-list-tabs)>.page-header::before,
 html[data-fis-view-scope="1"][data-fis-top-target-contacts="1"] .chat-app .page-shell:has(input[placeholder='Search contacts...'])>.page-header::before,
 html[data-fis-view-scope="1"][data-fis-top-target-feeds="1"] .chat-app .page-shell:has(.feed-cover-shell)>.page-header::before,
 html[data-fis-view-scope="1"][data-fis-top-target-me="1"] .chat-app .user-profile-page-root>.page-header::before{content:"";position:absolute;top:calc(-1px * var(--fis-top-bar-over-top,0));right:0;bottom:calc(-1px * var(--fis-top-bar-over-bottom,0));left:0;z-index:-1;pointer-events:none;background-color:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background-image:var(--fis-top-bar-image)!important;background-size:var(--fis-top-bar-size)!important;background-repeat:var(--fis-top-bar-repeat)!important;background-position:var(--fis-top-bar-position)!important}
-html[data-fis-view-scope="1"][data-fis-bottom-image-input="1"] .chat-app .chat-room-wrapper .chat-input-bar:not(:has(.chat-plus-menu))::before{content:"";position:absolute;top:calc(-1px * var(--fis-bottom-bar-input-over-top,0));right:0;bottom:calc(-1px * var(--fis-bottom-bar-input-over-bottom,0));left:0;z-index:-1;pointer-events:none;background-color:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background-image:var(--fis-bottom-bar-input-image)!important;background-size:var(--fis-bottom-bar-input-size)!important;background-repeat:no-repeat!important;background-position:var(--fis-bottom-bar-input-position)!important}
+html[data-fis-view-scope="1"][data-fis-bottom-image-input="1"] .chat-app .chat-room-wrapper .chat-input-bar:not(:has(.chat-plus-menu)):not(:has(>[class~="h-[220px]"]))::before{content:"";position:absolute;top:calc(-1px * var(--fis-bottom-bar-input-over-top,0));right:0;bottom:calc(-1px * var(--fis-bottom-bar-input-over-bottom,0));left:0;z-index:-1;pointer-events:none;background-color:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background-image:var(--fis-bottom-bar-input-image)!important;background-size:var(--fis-bottom-bar-input-size)!important;background-repeat:no-repeat!important;background-position:var(--fis-bottom-bar-input-position)!important}
 html[data-fis-view-scope="1"][data-fis-bottom-image-tab="1"] .chat-app .chat-tab-bar::before{content:"";position:absolute;top:calc(-1px * var(--fis-bottom-bar-tab-over-top,0));right:0;bottom:calc(-1px * var(--fis-bottom-bar-tab-over-bottom,0));left:0;z-index:-1;pointer-events:none;background-color:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background-image:var(--fis-bottom-bar-tab-image)!important;background-size:var(--fis-bottom-bar-tab-size)!important;background-repeat:no-repeat!important;background-position:var(--fis-bottom-bar-tab-position)!important}
+
+/* 头像圆角按页面范围生效；仅命中已确认的头像容器。 */
+html[data-fis-avatar-style="1"][data-fis-avatar-target-messages="1"] .chat-app .page-shell:has(.chat-list-tabs,.messages-page-root) :is(.minimal-avatar-wrapper,[class~="w-[36px]"][class~="h-[36px]"]),
+html[data-fis-avatar-style="1"][data-fis-avatar-target-contacts="1"] .chat-app .page-shell:has(input[placeholder='Search contacts...'],.contacts-page-root) :is(.minimal-avatar-wrapper,.freq-avatar,.freq-detail-avatar),
+html[data-fis-avatar-style="1"][data-fis-avatar-target-feeds="1"] .chat-app :is(.feed-profile-avatar,.feed-post-author-avatar,.feed-comment-avatar),
+html[data-fis-avatar-style="1"][data-fis-avatar-target-me="1"] .chat-app .user-profile-page-root [class~="w-[84px]"][class~="h-[84px]"],
+html[data-fis-avatar-style="1"][data-fis-avatar-target-chat-room="1"] .chat-app .chat-room-wrapper :is(.chat-msg-avatar>[class~="w-[40px]"][class~="h-[40px]"],.chat-msg-wrapper>.chat-msg-avatar[class~="w-[40px]"][class~="h-[40px]"],.chat-offline-avatar){border-radius:var(--fis-avatar-radius)!important}
+html[data-fis-avatar-style="1"] .chat-app :is(.minimal-avatar-wrapper,.freq-avatar,.freq-detail-avatar,.feed-profile-avatar,.feed-post-author-avatar,.feed-comment-avatar,.chat-offline-avatar,[class~="w-[84px]"][class~="h-[84px]"],.chat-msg-avatar>[class~="w-[40px]"][class~="h-[40px]"],.chat-msg-wrapper>.chat-msg-avatar[class~="w-[40px]"][class~="h-[40px]"])>img{border-radius:inherit!important}
+
+/* 聊天顶部的角色名、角色头像与用户头像彼此独立。两个头像以顶部栏中心为原点自由移动，不参与标题布局。 */
+html[data-fis-avatar-style="1"][data-fis-avatar-target-chat-room="1"][data-fis-chat-header-align="left"] .chat-app .chat-room-wrapper>.page-header .page-title{text-align:left!important;justify-self:stretch}
+html[data-fis-avatar-style="1"][data-fis-avatar-target-chat-room="1"] .chat-app .chat-room-wrapper>.page-header .page-header-content{position:relative}
+html[data-fis-avatar-style="1"][data-fis-avatar-target-chat-room="1"][data-fis-chat-header-avatar="1"] .chat-app .chat-room-wrapper>.page-header .page-header-content::before,
+html[data-fis-avatar-style="1"][data-fis-avatar-target-chat-room="1"][data-fis-chat-header-user-avatar="1"] .chat-app .chat-room-wrapper>.page-header .page-header-content::after{content:"";position:absolute;z-index:1;left:50%;top:50%;display:block;width:var(--fis-chat-header-avatar-size);height:var(--fis-chat-header-avatar-size);box-sizing:border-box;border-radius:var(--fis-avatar-radius);background-size:cover;background-position:center;background-repeat:no-repeat;pointer-events:none}
+html[data-fis-avatar-style="1"][data-fis-avatar-target-chat-room="1"][data-fis-chat-header-avatar="1"] .chat-app .chat-room-wrapper>.page-header .page-header-content::before{background-image:var(--fis-chat-header-avatar);transform:translate(calc(-50% + var(--fis-chat-header-avatar-x)),calc(-50% + var(--fis-chat-header-avatar-y)))}
+html[data-fis-avatar-style="1"][data-fis-avatar-target-chat-room="1"][data-fis-chat-header-user-avatar="1"] .chat-app .chat-room-wrapper>.page-header .page-header-content::after{background-image:var(--fis-chat-header-user-avatar);transform:translate(calc(-50% + var(--fis-chat-header-user-avatar-x)),calc(-50% + var(--fis-chat-header-user-avatar-y)))}
+html[data-fis-avatar-style="1"][data-fis-avatar-target-chat-room="1"][data-fis-chat-header-align="left"] .chat-app .chat-room-wrapper>.page-header .chat-typing-indicator{left:0;transform:none}
+
+/* 用户与角色消息头像分别隐藏；角色占位同时收起，静默想法图标保留。 */
+html[data-fis-avatar-style="1"][data-fis-avatar-target-chat-room="1"][data-fis-hide-chat-user-avatar="1"] .chat-app .chat-room-wrapper .chat-msg-wrapper[data-role="user"]>.chat-msg-avatar{display:none!important}
+html[data-fis-avatar-style="1"][data-fis-avatar-target-chat-room="1"][data-fis-hide-chat-user-avatar="1"] .chat-app .chat-room-wrapper :is(.chat-msg-wrapper,.chat-offline-entry)[data-role="user"]>[class~="w-[40px]"][class~="shrink-0"],
+html[data-fis-avatar-style="1"][data-fis-avatar-target-chat-room="1"][data-fis-hide-chat-user-avatar="1"] .chat-app .chat-room-wrapper .chat-offline-entry[data-role="user"]>.chat-offline-avatar{display:none!important}
+html[data-fis-avatar-style="1"][data-fis-avatar-target-chat-room="1"][data-fis-hide-chat-role-avatar="1"] .chat-app .chat-room-wrapper .chat-msg-wrapper[data-role="assistant"]>.chat-msg-avatar,
+html[data-fis-avatar-style="1"][data-fis-avatar-target-chat-room="1"][data-fis-hide-chat-role-avatar="1"] .chat-app .chat-room-wrapper .chat-msg-wrapper[data-role="assistant"]>[class~="w-[40px]"][class~="shrink-0"]:not(.chat-monologue-heart),
+html[data-fis-avatar-style="1"][data-fis-avatar-target-chat-room="1"][data-fis-hide-chat-role-avatar="1"] .chat-app .chat-room-wrapper .chat-offline-entry[data-role="assistant"]>.chat-offline-avatar{display:none!important}
+
+/* 自定义头像边框直接覆盖主页、动态原生边框，避免叠成双层。 */
+html[data-fis-avatar-border="1"][data-fis-avatar-target-messages="1"] .chat-app .page-shell:has(.chat-list-tabs,.messages-page-root) :is(.minimal-avatar-wrapper,[class~="w-[36px]"][class~="h-[36px]"]),
+html[data-fis-avatar-border="1"][data-fis-avatar-target-contacts="1"] .chat-app .page-shell:has(input[placeholder='Search contacts...'],.contacts-page-root) :is(.minimal-avatar-wrapper,.freq-avatar,.freq-detail-avatar),
+html[data-fis-avatar-border="1"][data-fis-avatar-target-feeds="1"] .chat-app :is(.feed-profile-avatar,.feed-post-author-avatar,.feed-comment-avatar),
+html[data-fis-avatar-border="1"][data-fis-avatar-target-me="1"] .chat-app .user-profile-page-root [class~="w-[84px]"][class~="h-[84px]"],
+html[data-fis-avatar-border="1"][data-fis-avatar-target-chat-room="1"] .chat-app .chat-room-wrapper :is(.chat-msg-avatar>[class~="w-[40px]"][class~="h-[40px]"],.chat-msg-wrapper>.chat-msg-avatar[class~="w-[40px]"][class~="h-[40px]"],.chat-offline-avatar){box-sizing:border-box!important;border:var(--fis-avatar-border-width) solid var(--fis-avatar-border-color)!important}
+html[data-fis-avatar-border="1"][data-fis-avatar-target-chat-room="1"][data-fis-chat-header-avatar="1"] .chat-app .chat-room-wrapper>.page-header .page-header-content::before,
+html[data-fis-avatar-border="1"][data-fis-avatar-target-chat-room="1"][data-fis-chat-header-user-avatar="1"] .chat-app .chat-room-wrapper>.page-header .page-header-content::after{border:var(--fis-avatar-border-width) solid var(--fis-avatar-border-color)}
+
+/* 心声便利贴与状态数值条。关闭功能后不覆盖 Float 原生样式。 */
+html[data-fis-thought-style="1"] .chat-app .chat-room-wrapper .chat-thought-card{background:var(--fis-thought-background)!important;border-radius:var(--fis-thought-radius)!important}
+html[data-fis-thought-style="1"][data-fis-thought-border="1"] .chat-app .chat-room-wrapper .chat-thought-card{border:var(--fis-thought-border-width) solid var(--fis-thought-border-color)!important}
+html[data-fis-thought-style="1"]:not([data-fis-thought-border="1"]) .chat-app .chat-room-wrapper .chat-thought-card{border:0!important}
+html[data-fis-thought-style="1"] .chat-app .chat-room-wrapper .chat-thought-title,
+html[data-fis-thought-style="1"] .chat-app .chat-room-wrapper .chat-thought-sig{color:var(--fis-thought-title-color)!important}
+html[data-fis-thought-style="1"] .chat-app .chat-room-wrapper .chat-thought-body,
+html[data-fis-thought-style="1"] .chat-app .chat-room-wrapper .chat-thought-body :is(.chat-bilingual-section-translation,.chat-bilingual-toggle){color:var(--fis-thought-text-color)!important}
+html[data-fis-thought-style="1"] .chat-app .chat-room-wrapper .chat-thought-tape-left{background:var(--fis-thought-tape-left)!important}
+html[data-fis-thought-style="1"] .chat-app .chat-room-wrapper .chat-thought-tape-right{background:var(--fis-thought-tape-right)!important}
+html[data-fis-thought-style="1"]:not([data-fis-thought-tape="1"]) .chat-app .chat-room-wrapper :is(.chat-thought-tape-left,.chat-thought-tape-right){display:none!important}
+html[data-fis-thought-style="1"] .chat-app .chat-room-wrapper .state-bar-track{background:var(--fis-thought-value-track)!important}
+html[data-fis-thought-style="1"] .chat-app .chat-room-wrapper .state-bar-fill{background:var(--fis-thought-value-fill)!important}
+html[data-fis-thought-style="1"] .chat-app .chat-room-wrapper :is(button,div).chat-monologue-heart{position:relative!important;left:var(--fis-thought-icon-x)!important;top:var(--fis-thought-icon-y)!important;display:flex!important;align-items:center!important;justify-content:center!important;background:transparent!important;color:var(--fis-thought-icon-color)!important;box-shadow:none!important;overflow:visible!important}
+html[data-fis-thought-style="1"] .chat-app .chat-room-wrapper :is(button,div).chat-monologue-heart>span.chat-monologue-heart{color:inherit!important}
+
+/* iMessage 风格译文：紧跟原文、去除默认留白，可独立设色、粗细、字号与位置。 */
+html[data-fis-translation-style="1"] .chat-app .chat-room-wrapper .chat-bilingual-block{gap:0!important}
+html[data-fis-translation-style="1"] .chat-app .chat-room-wrapper .chat-bilingual-section-translation{position:relative;left:var(--fis-translation-x);top:var(--fis-translation-y);margin-top:1px;color:var(--fis-translation-color)!important;font-size:var(--fis-translation-size)!important;font-weight:var(--fis-translation-weight)!important;font-style:normal!important;opacity:1!important}
+html[data-fis-translation-style="1"] .chat-app .chat-room-wrapper .chat-bilingual-section-translation .chat-markdown{color:inherit!important;font-size:inherit!important;font-weight:inherit!important;font-style:inherit!important;opacity:1!important}
+html[data-fis-translation-style="1"] .chat-app .chat-room-wrapper .chat-bilingual-section-translation .chat-markdown :is(p,.chat-markdown-paragraph,li,blockquote){color:inherit!important;font-size:inherit!important;font-weight:inherit!important;font-style:normal!important;opacity:1!important}
+html[data-fis-translation-style="1"] .chat-app .chat-room-wrapper .chat-thought-body .chat-bilingual-section-translation{color:var(--fis-translation-color)!important;font-size:var(--fis-translation-size)!important;font-weight:var(--fis-translation-weight)!important;font-style:normal!important}
+html[data-fis-translation-style="1"]:not([data-fis-translation-divider="1"]) .chat-app .chat-room-wrapper .chat-bilingual-divider{display:none!important}
+html[data-fis-translation-style="1"][data-fis-translation-always="1"] .chat-app .chat-room-wrapper .chat-bilingual-toggle{display:none!important}
+html[data-fis-translation-outside="1"][data-fis-translation-shadow="1"] .chat-app .chat-room-wrapper .chat-bilingual-section-translation{text-shadow:-1px -1px 0 var(--fis-translation-shadow),1px -1px 0 var(--fis-translation-shadow),-1px 1px 0 var(--fis-translation-shadow),1px 1px 0 var(--fis-translation-shadow),0 1px 3px var(--fis-translation-shadow)!important}
+html[data-fis-translation-style="1"][data-fis-translation-background="1"] .chat-app .chat-room-wrapper .chat-bilingual-section-translation{width:fit-content!important;max-width:100%!important;box-sizing:border-box!important;padding:4px 8px!important;background:var(--fis-translation-background)!important;border-radius:var(--fis-translation-background-radius)!important}
+
+/* 语音转写：翻译开启时仅显示译文，提示词与原文不再叠在译文下方。 */
+html[data-fis-translation-style="1"] .chat-app .chat-room-wrapper .voice-msg-text-bubble{padding:0!important;min-height:0!important;background:transparent!important;background-image:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;overflow:visible!important}
+html[data-fis-translation-style="1"] .chat-app .chat-room-wrapper .voice-msg-text-bubble .chat-bilingual-section:first-child,
+html[data-fis-translation-style="1"] .chat-app .chat-room-wrapper .voice-msg-text-bubble .chat-bilingual-toggle,
+html[data-fis-translation-style="1"] .chat-app .chat-room-wrapper .voice-msg-text-bubble .chat-bilingual-divider{display:none!important}
+html[data-fis-translation-style="1"] .chat-app .chat-room-wrapper .voice-msg-text-bubble .chat-bilingual-section-translation{left:var(--fis-voice-translation-x)!important;top:var(--fis-voice-translation-y)!important;margin-top:0!important;width:auto!important;max-width:100%!important;padding:0!important;background:transparent!important;border-radius:0!important}
+html[data-fis-translation-style="1"][data-fis-voice-translation-background="1"] .chat-app .chat-room-wrapper .voice-msg-text-bubble .chat-bilingual-section-translation{width:fit-content!important;padding:4px 8px!important;background:var(--fis-voice-translation-background)!important;border-radius:var(--fis-voice-translation-background-radius)!important}
+
+/* 与九宫格气泡插件协作：角色译文不参与气泡图片的尺寸计算。 */
+html[data-fis-translation-outside="1"] .chat-app .chat-room-wrapper [data-nine-slice-bubble-skin="1"][data-nine-slice-bubble-role="assistant"]:has(>.chat-bilingual-block){padding:0!important;min-width:0!important;min-height:0!important}
+html[data-fis-translation-outside="1"] .chat-app .chat-room-wrapper [data-nine-slice-bubble-skin="1"][data-nine-slice-bubble-role="assistant"]:has(>.chat-bilingual-block)::after{display:none!important}
+html[data-fis-translation-outside="1"] .chat-app .chat-room-wrapper [data-nine-slice-bubble-skin="1"][data-nine-slice-bubble-role="assistant"]>.chat-bilingual-block>.chat-bilingual-section:first-child{position:relative!important;isolation:isolate!important;align-self:flex-start!important;width:fit-content!important;max-width:100%!important;box-sizing:border-box!important;padding:var(--nsb-pad-top) var(--nsb-pad-right) var(--nsb-pad-bottom) var(--nsb-pad-left)!important;min-width:calc(var(--nsb-edge-left) + var(--nsb-edge-right))!important;min-height:calc(var(--nsb-edge-top) + var(--nsb-edge-bottom))!important;color:var(--nsb-text-color)!important}
+html[data-fis-translation-outside="1"] .chat-app .chat-room-wrapper [data-nine-slice-bubble-skin="1"][data-nine-slice-bubble-role="assistant"]>.chat-bilingual-block>.chat-bilingual-section:first-child::after{content:""!important;display:block!important;position:absolute!important;inset:0!important;z-index:-1!important;pointer-events:none!important;box-sizing:border-box!important;border-style:solid!important;border-color:transparent!important;border-width:var(--nsb-edge-top) var(--nsb-edge-right) var(--nsb-edge-bottom) var(--nsb-edge-left)!important;border-image-source:var(--nsb-image)!important;border-image-slice:var(--nsb-slice-top) var(--nsb-slice-right) var(--nsb-slice-bottom) var(--nsb-slice-left) fill!important;border-image-width:var(--nsb-edge-top) var(--nsb-edge-right) var(--nsb-edge-bottom) var(--nsb-edge-left)!important;border-image-repeat:stretch!important;opacity:var(--nsb-image-opacity,1)!important;background:transparent!important;transform:scaleX(-1)!important;transform-origin:center center!important}
+/* 引用消息的预览与双语正文是同级节点；让两者叠在同一网格起点，引用留在原文气泡内，译文仍在下一行。 */
+html[data-fis-translation-outside="1"] .chat-app .chat-room-wrapper .chat-quote-message[data-nine-slice-bubble-skin="1"][data-nine-slice-bubble-role="assistant"]:has(>.chat-quote-preview){display:grid!important;grid-template-columns:minmax(0,1fr)!important}
+html[data-fis-translation-outside="1"] .chat-app .chat-room-wrapper .chat-quote-message[data-nine-slice-bubble-skin="1"][data-nine-slice-bubble-role="assistant"]:has(>.chat-quote-preview)>.chat-quote-preview{grid-area:1/1!important;align-self:start!important;z-index:2!important;min-width:0!important;width:auto!important;margin:var(--nsb-pad-top) var(--nsb-pad-right) 0 var(--nsb-pad-left)!important;box-sizing:border-box!important}
+html[data-fis-translation-outside="1"] .chat-app .chat-room-wrapper .chat-quote-message[data-nine-slice-bubble-skin="1"][data-nine-slice-bubble-role="assistant"]:has(>.chat-quote-preview)>.chat-bilingual-block{grid-area:1/1!important;min-width:0!important}
+html[data-fis-translation-outside="1"] .chat-app .chat-room-wrapper .chat-quote-message[data-nine-slice-bubble-skin="1"][data-nine-slice-bubble-role="assistant"]:has(>.chat-quote-preview)>.chat-bilingual-block>.chat-bilingual-section:first-child{align-self:stretch!important;width:100%!important;padding-top:calc(var(--nsb-pad-top) + 34px)!important}
+
+/* 聊天输入框只移动自身，不改变底部栏和工具按钮的布局。 */
+html[data-fis-input-position-chat="1"] .chat-app .chat-room-wrapper .chat-input-bar>.chat-input-textarea{position:relative!important;left:var(--fis-chat-input-offset-x)!important;top:var(--fis-chat-input-offset-y)!important}
+
+/* 固定工具栏的基准布局；按钮位移使用独立合成层，避免 iPad 恢复前台后 relative/left 基准漂移。 */
+html[data-fis-toolbar-style="1"] .chat-app .chat-room-wrapper .chat-input-actions{display:flex!important;justify-content:center!important;align-items:center!important;gap:32px!important;width:100%!important;box-sizing:border-box!important}
+html[data-fis-toolbar-style="1"] .chat-app .chat-room-wrapper .chat-input-actions>[data-fis-tool-icon]{position:relative!important;left:0!important;top:0!important;translate:none!important;will-change:transform}
+html[data-fis-toolbar-style="1"] .chat-app .chat-room-wrapper [data-fis-tool-icon="offline"]{transform:translate3d(var(--fis-tool-offline-x),var(--fis-tool-offline-y),0)!important}
+html[data-fis-toolbar-style="1"] .chat-app .chat-room-wrapper [data-fis-tool-icon="emoji"]{transform:translate3d(var(--fis-tool-emoji-x),var(--fis-tool-emoji-y),0)!important}
+html[data-fis-toolbar-style="1"] .chat-app .chat-room-wrapper [data-fis-tool-icon="plus"]{transform:translate3d(var(--fis-tool-plus-x),var(--fis-tool-plus-y),0)!important}
+html[data-fis-toolbar-style="1"] .chat-app .chat-room-wrapper [data-fis-tool-icon="send"]{transform:translate3d(var(--fis-tool-send-x),var(--fis-tool-send-y),0)!important}
+html[data-fis-toolbar-style="1"] .chat-app .chat-room-wrapper [data-fis-tool-icon="generate"]{transform:translate3d(var(--fis-tool-generate-x),var(--fis-tool-generate-y),0)!important}
+html[data-fis-toolbar-style="1"] .chat-app .chat-room-wrapper [data-fis-tool-icon="offlineReturn"]{transform:translate3d(var(--fis-tool-offline-return-x),var(--fis-tool-offline-return-y),0)!important}
+html[data-fis-toolbar-style="1"] .chat-app .chat-room-wrapper [data-fis-tool-icon="offlineEmoji"]{transform:translate3d(var(--fis-tool-offline-emoji-x),var(--fis-tool-offline-emoji-y),0)!important}
+html[data-fis-toolbar-style="1"] .chat-app .chat-room-wrapper [data-fis-tool-icon="offlineSend"]{transform:translate3d(var(--fis-tool-offline-send-x),var(--fis-tool-offline-send-y),0)!important}
+html[data-fis-toolbar-style="1"][data-fis-tool-offline-hidden="1"] .chat-app [data-fis-tool-icon="offline"],
+html[data-fis-toolbar-style="1"][data-fis-tool-emoji-hidden="1"] .chat-app [data-fis-tool-icon="emoji"],
+html[data-fis-toolbar-style="1"][data-fis-tool-plus-hidden="1"] .chat-app [data-fis-tool-icon="plus"],
+html[data-fis-toolbar-style="1"][data-fis-tool-send-hidden="1"] .chat-app [data-fis-tool-icon="send"]:not([aria-label^="停止"]),
+html[data-fis-toolbar-style="1"][data-fis-tool-generate-hidden="1"] .chat-app [data-fis-tool-icon="generate"],
+html[data-fis-toolbar-style="1"][data-fis-tool-offline-return-hidden="1"] .chat-app [data-fis-tool-icon="offlineReturn"],
+html[data-fis-toolbar-style="1"][data-fis-tool-offline-emoji-hidden="1"] .chat-app [data-fis-tool-icon="offlineEmoji"],
+html[data-fis-toolbar-style="1"][data-fis-tool-offline-send-hidden="1"] .chat-app [data-fis-tool-icon="offlineSend"],
+html[data-fis-toolbar-style="1"][data-fis-merge-expressions="1"] .chat-app [data-fis-tool-icon="sticker"]{display:none!important}
+/* Float 生成时会卸载星星按钮。纸飞机可见时保留星星占位；纸飞机隐藏时，让停止按钮直接接管星星的位置。 */
+html[data-fis-toolbar-style="1"]:not([data-fis-tool-send-hidden="1"]):not([data-fis-tool-generate-hidden="1"]) .chat-app .chat-room-wrapper .chat-input-actions:not(:has(>[data-fis-tool-icon="generate"]))::after{content:"";display:block;flex:0 0 24px;width:24px;height:24px;pointer-events:none}
+html[data-fis-toolbar-style="1"][data-fis-tool-send-hidden="1"]:not([data-fis-tool-generate-hidden="1"]) .chat-app .chat-room-wrapper [data-fis-tool-icon="send"][aria-label^="停止"]{transform:translate3d(var(--fis-tool-generate-x),var(--fis-tool-generate-y),0)!important}
+
+/* 自带分类与导入表情包共用同一行；隐藏自带时仅保留“特效”。 */
+html[data-fis-hide-builtin-emojis="1"] .fis-expression-panel[data-fis-expression-kind="emoji"] .emoji-category-pill:not(.fis-expression-proxy):not([data-fis-expression-effect]){display:none!important}
+html[data-fis-hide-builtin-emojis="1"] .fis-expression-panel[data-fis-expression-kind="emoji"]>.grid-cols-8{display:none!important}
 `;
 
 export default {
@@ -577,9 +893,9 @@ export default {
     id: PLUGIN_ID,
     name: "自定义聊天主题",
     apiVersion: 1,
-    version: "1.0.1",
+    version: "1.0.26",
     author: "NEEN&GPT",
-    description: "用 PNG、主题色、字体、卡片、按钮与输入框设置自定义聊天界面",
+    description: "用 PNG、主题色、字体、卡片、按钮、输入框、头像与工具栏设置自定义聊天界面",
   },
 
   setup(ctx) {
@@ -598,8 +914,78 @@ export default {
     const blurTimers = new Map();
     const imageObjectUrls = new Map();
     let disposed = false;
+    let activeSessionId = "";
+    let lastUserHeaderAvatar = "";
+    let userHeaderAvatarProbe = null;
+    let userHeaderAvatarProbeSession = "";
+    let expressionBuiltinLabels = [];
+    let expressionPackLabels = [];
+    let expressionPackProbeComplete = false;
+    let expressionProbeStage = "";
+    let expressionProbeDeadline = 0;
+    let expressionProbeTimer = 0;
+    let pendingBuiltinIndex = null;
+    let pendingPackIndex = null;
+    let dayNightTimer = 0;
+    let lastDayNightKey = "";
+    const translationTogglePending = new WeakSet();
 
-    const persist = () => ctx.system.storage.set(STORAGE_KEY, state);
+    let liveStyleDbPromise = null;
+    const openLiveStyleDb = () => {
+      if (liveStyleDbPromise) return liveStyleDbPromise;
+      liveStyleDbPromise = new Promise((resolve, reject) => {
+        if (typeof indexedDB === "undefined") return reject(new Error("IndexedDB unavailable"));
+        const request = indexedDB.open(LIVE_STYLE_DB_NAME, 1);
+        request.onupgradeneeded = () => {
+          if (!request.result.objectStoreNames.contains(LIVE_STYLE_STORE_NAME)) {
+            request.result.createObjectStore(LIVE_STYLE_STORE_NAME, { keyPath: "id" });
+          }
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error || new Error("IndexedDB open failed"));
+      });
+      return liveStyleDbPromise;
+    };
+    const writeLiveStyleFallback = payload => {
+      try { localStorage.setItem(LIVE_STYLE_FALLBACK_KEY, JSON.stringify(payload)); } catch (_) {}
+    };
+    const readLiveStyleFallback = () => {
+      try {
+        const value = localStorage.getItem(LIVE_STYLE_FALLBACK_KEY);
+        return value ? JSON.parse(value) : null;
+      } catch (_) {
+        return null;
+      }
+    };
+    const persistLightweightStyles = () => {
+      const payload = {
+        id: LIVE_STYLE_RECORD_ID,
+        thoughtStyle: JSON.parse(JSON.stringify(state.thoughtStyle)),
+        translationStyle: JSON.parse(JSON.stringify(state.translationStyle)),
+      };
+      void openLiveStyleDb().then(db => new Promise((resolve, reject) => {
+        const transaction = db.transaction(LIVE_STYLE_STORE_NAME, "readwrite");
+        transaction.objectStore(LIVE_STYLE_STORE_NAME).put(payload);
+        transaction.oncomplete = () => resolve();
+        transaction.onerror = () => reject(transaction.error || new Error("IndexedDB write failed"));
+      })).catch(error => {
+        writeLiveStyleFallback(payload);
+        ctx.system.log("[自定义聊天主题] 轻量样式保存已切换到备用存储", error);
+      });
+    };
+    const loadLightweightStyles = () => openLiveStyleDb().then(db => new Promise((resolve, reject) => {
+      const transaction = db.transaction(LIVE_STYLE_STORE_NAME, "readonly");
+      const request = transaction.objectStore(LIVE_STYLE_STORE_NAME).get(LIVE_STYLE_RECORD_ID);
+      request.onsuccess = () => resolve(request.result || readLiveStyleFallback());
+      request.onerror = () => reject(request.error || new Error("IndexedDB read failed"));
+    })).catch(error => {
+      ctx.system.log("[自定义聊天主题] 轻量样式读取已切换到备用存储", error);
+      return readLiveStyleFallback();
+    });
+    const persist = () => {
+      ctx.system.storage.set(STORAGE_KEY, state);
+      persistLightweightStyles();
+    };
     const attributeName = key => "data-fis-" + key.replace(/[A-Z]/g, letter => "-" + letter.toLowerCase());
 
     function imageSourceForCss(source) {
@@ -648,6 +1034,267 @@ export default {
       });
     }
 
+    function currentChatSession() {
+      if (activeSessionId) {
+        const active = ctx.data.sessions.get(activeSessionId);
+        if (active) return active;
+      }
+      const wrapper = document.querySelector(".chat-app .chat-room-wrapper");
+      if (!wrapper) return null;
+      const session = ctx.data.sessions.list().find(item => wrapper.classList.contains("session-" + item.id)) || null;
+      if (session) activeSessionId = session.id;
+      return session;
+    }
+
+    function probeStoredUserHeaderAvatar() {
+      if (typeof indexedDB === "undefined") return;
+      const session = currentChatSession();
+      const characterId = session && session.contactId ? String(session.contactId) : "";
+      const sessionKey = session && session.id ? String(session.id) : characterId;
+      if (userHeaderAvatarProbe && userHeaderAvatarProbeSession === sessionKey) return;
+      userHeaderAvatarProbeSession = sessionKey;
+      const probe = new Promise(resolve => {
+        const request = indexedDB.open("AiPhoneKvDB");
+        request.onerror = () => resolve("");
+        request.onsuccess = () => {
+          try {
+            const db = request.result;
+            const transaction = db.transaction("entries", "readonly");
+            const store = transaction.objectStore("entries");
+            const identitiesRequest = store.get("ai_phone_user_identities_v1");
+            const bindingsRequest = store.get("ai_phone_bindings_v1");
+            transaction.onerror = () => resolve("");
+            transaction.oncomplete = () => {
+              try {
+                const identities = JSON.parse(identitiesRequest.result && identitiesRequest.result.value || "[]");
+                const bindings = JSON.parse(bindingsRequest.result && bindingsRequest.result.value || "{}");
+                if (!Array.isArray(identities) || !identities.length) return resolve("");
+                let identityId = bindings && bindings.globalDefaults && bindings.globalDefaults.userIdentityId;
+                const characterBinding = characterId && Array.isArray(bindings.characterBindings)
+                  ? bindings.characterBindings.find(item => item && String(item.characterId) === characterId)
+                  : null;
+                const slots = [
+                  characterBinding && characterBinding.defaults,
+                  bindings && bindings.appDefaults && bindings.appDefaults.chat,
+                  characterBinding && characterBinding.appOverrides && characterBinding.appOverrides.chat,
+                ];
+                for (const slot of slots) if (slot && slot.userIdentityId) identityId = slot.userIdentityId;
+                const identity = identities.find(item => item && item.id === identityId) || identities[0];
+                resolve(identity && typeof identity.avatarUrl === "string" ? identity.avatarUrl : "");
+              } catch (_) { resolve(""); }
+            };
+          } catch (_) { resolve(""); }
+        };
+      });
+      userHeaderAvatarProbe = probe;
+      probe.then(source => {
+        if (userHeaderAvatarProbe !== probe) return source;
+        if (source) {
+          lastUserHeaderAvatar = String(source);
+          if (!disposed) syncChatHeaderAvatar();
+        }
+        return source;
+      });
+    }
+
+    function syncChatHeaderAvatar() {
+      const headerEnabled = state.avatarStyle.enabled && state.avatarStyle.applyTargets.includes("chatRoom");
+      if (headerEnabled && state.avatarStyle.headerAvatarVisible) {
+        const session = currentChatSession();
+        const characterId = session && session.isGroup
+          ? (Array.isArray(session.participantIds) ? session.participantIds[0] : "")
+          : (session && session.contactId);
+        const character = characterId ? ctx.data.characters.get(characterId) : null;
+        const avatar = character && typeof character.avatar === "string" && character.avatar
+          ? character.avatar
+          : "/images/default-moment-avatar.png";
+        root.setAttribute("data-fis-chat-header-avatar", "1");
+        root.style.setProperty("--fis-chat-header-avatar", cssUrl(imageSourceForCss(avatar)));
+      } else {
+        root.removeAttribute("data-fis-chat-header-avatar");
+        root.style.removeProperty("--fis-chat-header-avatar");
+      }
+
+      if (headerEnabled && state.avatarStyle.headerUserAvatarVisible) {
+        const wrapper = document.querySelector(".chat-app .chat-room-wrapper");
+        const userImage = wrapper && wrapper.querySelector(".chat-msg-wrapper[data-role='user']>.chat-msg-avatar img,.chat-offline-entry[data-role='user']>.chat-offline-avatar img,img[alt='Me']");
+        const source = userImage && (userImage.currentSrc || userImage.getAttribute("src") || userImage.src);
+        if (source) lastUserHeaderAvatar = String(source);
+        if (!lastUserHeaderAvatar) probeStoredUserHeaderAvatar();
+        if (lastUserHeaderAvatar) {
+          root.setAttribute("data-fis-chat-header-user-avatar", "1");
+          root.style.setProperty("--fis-chat-header-user-avatar", cssUrl(imageSourceForCss(lastUserHeaderAvatar)));
+        } else {
+          root.removeAttribute("data-fis-chat-header-user-avatar");
+          root.style.removeProperty("--fis-chat-header-user-avatar");
+        }
+      } else {
+        root.removeAttribute("data-fis-chat-header-user-avatar");
+        root.style.removeProperty("--fis-chat-header-user-avatar");
+      }
+    }
+
+    function syncExpressionProxyButtons(bar, kind, labels, onSelect) {
+      const existing = [...bar.children].filter(node => node instanceof HTMLElement && node.classList.contains("fis-expression-proxy"));
+      const signature = `${kind}:${labels.join("\u0001")}`;
+      if (existing.map(node => node.getAttribute("data-fis-proxy-signature")).join("|") === labels.map((_, index) => `${signature}:${index}`).join("|")) return;
+      existing.forEach(node => node.remove());
+      const nativeAnchor = [...bar.children].find(node => node instanceof HTMLElement && node.classList.contains("emoji-category-pill")) || null;
+      labels.forEach((labelText, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "emoji-category-pill fis-expression-proxy";
+        button.textContent = labelText;
+        button.setAttribute("data-fis-proxy-signature", `${signature}:${index}`);
+        button.addEventListener("click", event => { event.stopPropagation(); onSelect(index); });
+        if (kind === "builtin") bar.insertBefore(button, nativeAnchor); else bar.append(button);
+      });
+    }
+
+    function scheduleExpressionSync(delay = 80) {
+      if (expressionProbeTimer) clearTimeout(expressionProbeTimer);
+      expressionProbeTimer = setTimeout(() => {
+        expressionProbeTimer = 0;
+        if (!disposed) syncToolbarDom();
+      }, delay);
+    }
+
+    function setToolbarIcon(button, key, enabled) {
+      if (!(button instanceof HTMLElement)) return;
+      if (!enabled || !key) {
+        if (button.hasAttribute("data-fis-tool-icon")) button.removeAttribute("data-fis-tool-icon");
+      }
+      else if (button.getAttribute("data-fis-tool-icon") !== key) button.setAttribute("data-fis-tool-icon", key);
+    }
+
+    function syncToolbarDom() {
+      const enabled = state.toolbarStyle.enabled;
+      for (const actions of document.querySelectorAll(".chat-app .chat-room-wrapper .chat-input-actions")) {
+        const buttons = [...actions.children].filter(node => node instanceof HTMLElement && node.tagName === "BUTTON");
+        const offlineButton = actions.querySelector(":scope>.chat-offline-toggle");
+        const returnOnlineButton = buttons.find(button => (button.getAttribute("aria-label") || "") === "返回线上模式") || null;
+        if (!offlineButton) {
+          if (!returnOnlineButton) {
+            buttons.forEach(button => setToolbarIcon(button, "", false));
+            continue;
+          }
+          const offlineEmojiButton = buttons.find(button => (button.getAttribute("aria-label") || "") === "表情") || null;
+          const offlineSendButton = buttons.find(button => /^(?:发送|停止)/.test(button.getAttribute("aria-label") || "")) || null;
+          const offlineAssignments = new Map([
+            [returnOnlineButton, "offlineReturn"],
+            [offlineEmojiButton, "offlineEmoji"],
+            [offlineSendButton, "offlineSend"],
+          ]);
+          buttons.forEach(button => {
+            const key = offlineAssignments.get(button) || "";
+            setToolbarIcon(button, key, enabled);
+          });
+          continue;
+        }
+        const sendButton = buttons.find(button => /^(?:发送|停止)/.test(button.getAttribute("aria-label") || "")) || null;
+        const generateButton = buttons.find(button => button !== sendButton && /触发\s*AI|主动回复|发送输入框内容并触发回复/.test(button.getAttribute("title") || "")) || null;
+        const fixedButtons = buttons.filter(button => button !== offlineButton && button !== sendButton && button !== generateButton);
+        const assignments = new Map([
+          [offlineButton, "offline"],
+          [fixedButtons[0], "emoji"],
+          [fixedButtons[1], "sticker"],
+          [fixedButtons[2], "plus"],
+          [sendButton, "send"],
+          [generateButton, "generate"],
+        ]);
+        buttons.forEach(button => setToolbarIcon(button, assignments.get(button) || "", enabled));
+
+        const inputBar = actions.closest(".chat-input-bar");
+        if (!inputBar) continue;
+        const emojiButton = actions.querySelector('[data-fis-tool-icon="emoji"]');
+        const stickerButton = actions.querySelector('[data-fis-tool-icon="sticker"]');
+        const panels = [...inputBar.children].filter(node => node instanceof HTMLElement && node.classList.contains("h-[220px]") && node.classList.contains("flex-col"));
+        for (const panel of panels) {
+          const isStickerPanel = !!panel.querySelector(".grid-cols-5");
+          const kind = isStickerPanel ? "sticker" : "emoji";
+          if (panel.getAttribute("data-fis-expression-kind") !== kind) panel.setAttribute("data-fis-expression-kind", kind);
+          if (!panel.classList.contains("fis-expression-panel")) panel.classList.add("fis-expression-panel");
+          const categoryBar = [...panel.children].find(node => node instanceof HTMLElement && node.querySelector(":scope>.emoji-category-pill"));
+          if (!categoryBar) {
+            if (isStickerPanel && expressionProbeStage === "collect") {
+              if (Date.now() < expressionProbeDeadline) {
+                scheduleExpressionSync();
+              } else {
+                expressionPackLabels = [];
+                expressionPackProbeComplete = true;
+                expressionProbeStage = "return";
+                setTimeout(() => { if (emojiButton?.isConnected) emojiButton.click(); }, 0);
+              }
+            }
+            continue;
+          }
+          const nativeButtons = [...categoryBar.children].filter(node => node instanceof HTMLElement && node.classList.contains("emoji-category-pill") && !node.classList.contains("fis-expression-proxy"));
+
+          if (!isStickerPanel) {
+            expressionBuiltinLabels = nativeButtons.map(button => button.textContent || "");
+            nativeButtons.forEach(button => {
+              const isEffect = (button.textContent || "") === "特效";
+              if (isEffect && !button.hasAttribute("data-fis-expression-effect")) button.setAttribute("data-fis-expression-effect", "");
+              if (!isEffect && button.hasAttribute("data-fis-expression-effect")) button.removeAttribute("data-fis-expression-effect");
+            });
+            if (enabled && state.toolbarStyle.mergeExpressions) {
+              syncExpressionProxyButtons(categoryBar, "pack", expressionPackLabels, index => {
+                pendingPackIndex = index;
+                stickerButton?.click();
+              });
+              if (!expressionPackProbeComplete && !expressionProbeStage && stickerButton) {
+                expressionProbeStage = "collect";
+                expressionProbeDeadline = Date.now() + 1500;
+                setTimeout(() => { if (stickerButton.isConnected) stickerButton.click(); }, 0);
+              } else if (expressionProbeStage === "return") {
+                expressionProbeStage = "";
+                expressionProbeDeadline = 0;
+              }
+            }
+            if (pendingBuiltinIndex != null) {
+              const target = nativeButtons[pendingBuiltinIndex];
+              pendingBuiltinIndex = null;
+              target?.click();
+            }
+            if (enabled && state.toolbarStyle.hideBuiltinEmojis) {
+              const effectButton = nativeButtons.find(button => (button.textContent || "") === "特效");
+              if (effectButton && !effectButton.hasAttribute("data-active")) effectButton.click();
+              else if (!effectButton && expressionPackLabels.length && !expressionProbeStage) stickerButton?.click();
+            }
+          } else {
+            expressionPackLabels = nativeButtons.map(button => button.textContent || "");
+            expressionPackProbeComplete = true;
+            if (expressionProbeStage === "collect") {
+              expressionProbeStage = "return";
+              expressionProbeDeadline = 0;
+              setTimeout(() => { if (emojiButton?.isConnected) emojiButton.click(); }, 0);
+              continue;
+            }
+            if (enabled && state.toolbarStyle.mergeExpressions) {
+              const builtinLabels = state.toolbarStyle.hideBuiltinEmojis
+                ? expressionBuiltinLabels.filter(label => label === "特效")
+                : expressionBuiltinLabels;
+              syncExpressionProxyButtons(categoryBar, "builtin", builtinLabels, index => {
+                const actualIndex = state.toolbarStyle.hideBuiltinEmojis
+                  ? expressionBuiltinLabels.findIndex(label => label === builtinLabels[index])
+                  : index;
+                pendingBuiltinIndex = actualIndex;
+                emojiButton?.click();
+              });
+            }
+            if (pendingPackIndex != null) {
+              const target = nativeButtons[pendingPackIndex];
+              pendingPackIndex = null;
+              target?.click();
+            }
+          }
+        }
+      }
+      if (!enabled || !state.toolbarStyle.mergeExpressions) {
+        document.querySelectorAll(".fis-expression-proxy").forEach(node => node.remove());
+      }
+    }
+
     function previewRegionGeometry(def, region, key, customPrefix = "") {
       const prefix = customPrefix || `--fis-${def.key.replace(/[A-Z]/g, letter => "-" + letter.toLowerCase())}`;
       if (key === "scale") root.style.setProperty(prefix + "-size", imageSizeCss(def, region.scale));
@@ -655,6 +1302,21 @@ export default {
       if (key === "overflowY" && def.overflow) {
         root.style.setProperty(prefix + "-over-top", String(region.overflowY));
         root.style.setProperty(prefix + "-over-bottom", String(region.overflowY));
+      }
+    }
+
+    function resyncBottomBarGeometry() {
+      const def = REGION_DEFS.find(item => item.key === "bottomBar");
+      const region = state.regions.bottomBar;
+      if (!def || !state.imagesEnabled || !region || !region.enabled || !region.image) return;
+      for (const [targetKey, suffix] of [["inputBar", "input"], ["tabBar", "tab"]]) {
+        const settings = region.targetSettings && region.targetSettings[targetKey];
+        if (!settings) continue;
+        const prefix = `--fis-bottom-bar-${suffix}`;
+        root.style.setProperty(prefix + "-size", imageSizeCss(def, settings.scale));
+        root.style.setProperty(prefix + "-position", `${settings.positionX}% ${settings.positionY}%`);
+        root.style.setProperty(prefix + "-over-top", String(settings.overflowY));
+        root.style.setProperty(prefix + "-over-bottom", String(settings.overflowY));
       }
     }
 
@@ -703,6 +1365,29 @@ export default {
       root.removeAttribute("data-fis-input-style-form");
       root.removeAttribute("data-fis-colors");
       root.removeAttribute("data-fis-interface-cards");
+      root.removeAttribute("data-fis-avatar-style");
+      root.removeAttribute("data-fis-avatar-border");
+      for (const key of ["messages", "contacts", "feeds", "me", "chat-room"]) root.removeAttribute("data-fis-avatar-target-" + key);
+      root.removeAttribute("data-fis-chat-header-avatar");
+      root.removeAttribute("data-fis-chat-header-user-avatar");
+      root.removeAttribute("data-fis-chat-header-align");
+      root.removeAttribute("data-fis-hide-chat-user-avatar");
+      root.removeAttribute("data-fis-hide-chat-role-avatar");
+      root.removeAttribute("data-fis-thought-style");
+      root.removeAttribute("data-fis-thought-border");
+      root.removeAttribute("data-fis-thought-tape");
+      root.removeAttribute("data-fis-translation-style");
+      root.removeAttribute("data-fis-translation-always");
+      root.removeAttribute("data-fis-translation-divider");
+      root.removeAttribute("data-fis-translation-outside");
+      root.removeAttribute("data-fis-translation-shadow");
+      root.removeAttribute("data-fis-translation-background");
+      root.removeAttribute("data-fis-voice-translation-background");
+      root.removeAttribute("data-fis-input-position-chat");
+      root.removeAttribute("data-fis-toolbar-style");
+      root.removeAttribute("data-fis-merge-expressions");
+      root.removeAttribute("data-fis-hide-builtin-emojis");
+      for (const [key] of TOOLBAR_ICON_DEFS) root.removeAttribute("data-fis-tool-" + toolbarIconSuffix(key) + "-hidden");
       root.removeAttribute("data-fis-base-color");
       for (const key of ["messages", "contacts", "feeds", "me", "chat-room"]) root.removeAttribute("data-fis-base-target-" + key);
       for (const target of FONT_TARGETS) root.removeAttribute("data-fis-font-" + target.key.replace(/[A-Z]/g, letter => "-" + letter.toLowerCase()));
@@ -715,6 +1400,99 @@ export default {
       for (const name of [...root.style]) {
         if (name.startsWith("--fis-")) root.style.removeProperty(name);
       }
+    }
+
+    function syncThoughtStyle() {
+      root.removeAttribute("data-fis-thought-style");
+      root.removeAttribute("data-fis-thought-border");
+      root.removeAttribute("data-fis-thought-tape");
+      if (!state.thoughtStyle.enabled) return;
+      root.setAttribute("data-fis-thought-style", "1");
+      if (state.thoughtStyle.borderVisible) root.setAttribute("data-fis-thought-border", "1");
+      if (state.thoughtStyle.tapeVisible) root.setAttribute("data-fis-thought-tape", "1");
+      root.style.setProperty("--fis-thought-background", colorWithOpacity(state.thoughtStyle.backgroundColor, state.thoughtStyle.backgroundOpacity));
+      root.style.setProperty("--fis-thought-radius", `${state.thoughtStyle.radius}px`);
+      root.style.setProperty("--fis-thought-title-color", state.thoughtStyle.titleColor);
+      root.style.setProperty("--fis-thought-text-color", state.thoughtStyle.textColor);
+      root.style.setProperty("--fis-thought-border-width", `${state.thoughtStyle.borderWidth}px`);
+      root.style.setProperty("--fis-thought-border-color", state.thoughtStyle.borderColor);
+      root.style.setProperty("--fis-thought-tape-left", state.thoughtStyle.tapeLeftColor);
+      root.style.setProperty("--fis-thought-tape-right", state.thoughtStyle.tapeRightColor);
+      root.style.setProperty("--fis-thought-value-track", state.thoughtStyle.valueTrackColor);
+      root.style.setProperty("--fis-thought-value-fill", state.thoughtStyle.valueFillColor);
+      root.style.setProperty("--fis-thought-icon-color", state.thoughtStyle.iconColor);
+      root.style.setProperty("--fis-thought-icon-x", `${state.thoughtStyle.iconOffsetX}px`);
+      root.style.setProperty("--fis-thought-icon-y", `${state.thoughtStyle.iconOffsetY}px`);
+    }
+
+    function syncTranslationDom() {
+      const buttons = document.querySelectorAll(".chat-app .chat-room-wrapper .chat-bilingual-toggle");
+      for (const button of buttons) {
+        if (!(button instanceof HTMLElement)) continue;
+        const expanded = button.getAttribute("aria-expanded") === "true";
+        const isVoiceTranscript = !!button.closest(".voice-msg-text-bubble");
+        const shouldExpand = state.translationStyle.enabled && (state.translationStyle.alwaysVisible || isVoiceTranscript);
+        if (shouldExpand) {
+          if (!expanded && !translationTogglePending.has(button)) {
+            button.setAttribute("data-fis-auto-expanded", "1");
+            translationTogglePending.add(button);
+            button.click();
+            queueMicrotask(() => requestAnimationFrame(() => {
+              translationTogglePending.delete(button);
+              if (!disposed) syncTranslationDom();
+            }));
+          }
+        } else if (button.hasAttribute("data-fis-auto-expanded")) {
+          button.removeAttribute("data-fis-auto-expanded");
+          if (expanded && !translationTogglePending.has(button)) {
+            translationTogglePending.add(button);
+            button.click();
+            queueMicrotask(() => requestAnimationFrame(() => translationTogglePending.delete(button)));
+          }
+        }
+      }
+    }
+
+    function syncTranslationStyle() {
+      root.removeAttribute("data-fis-translation-style");
+      root.removeAttribute("data-fis-translation-always");
+      root.removeAttribute("data-fis-translation-divider");
+      root.removeAttribute("data-fis-translation-outside");
+      root.removeAttribute("data-fis-translation-shadow");
+      root.removeAttribute("data-fis-translation-background");
+      root.removeAttribute("data-fis-voice-translation-background");
+      if (state.translationStyle.enabled) {
+        root.setAttribute("data-fis-translation-style", "1");
+        if (state.translationStyle.alwaysVisible) root.setAttribute("data-fis-translation-always", "1");
+        if (state.translationStyle.dividerVisible) root.setAttribute("data-fis-translation-divider", "1");
+        if (state.translationStyle.layoutMode === "outside") root.setAttribute("data-fis-translation-outside", "1");
+        if (state.translationStyle.shadowEnabled) root.setAttribute("data-fis-translation-shadow", "1");
+        if (state.translationStyle.backgroundEnabled) root.setAttribute("data-fis-translation-background", "1");
+        if (state.translationStyle.voiceBackgroundEnabled) root.setAttribute("data-fis-voice-translation-background", "1");
+        root.style.setProperty("--fis-translation-color", state.translationStyle.color);
+        root.style.setProperty("--fis-translation-shadow", state.translationStyle.shadowColor);
+        root.style.setProperty("--fis-translation-background", state.translationStyle.backgroundColor);
+        root.style.setProperty("--fis-translation-background-radius", `${state.translationStyle.backgroundRadius}px`);
+        root.style.setProperty("--fis-translation-size", `${state.translationStyle.size / 100}em`);
+        root.style.setProperty("--fis-translation-weight", state.translationStyle.bold ? "700" : "400");
+        root.style.setProperty("--fis-translation-x", `${state.translationStyle.offsetX}px`);
+        root.style.setProperty("--fis-translation-y", `${state.translationStyle.offsetY}px`);
+        root.style.setProperty("--fis-voice-translation-background", state.translationStyle.voiceBackgroundColor);
+        root.style.setProperty("--fis-voice-translation-background-radius", `${state.translationStyle.voiceBackgroundRadius}px`);
+        root.style.setProperty("--fis-voice-translation-x", `${state.translationStyle.voiceOffsetX}px`);
+        root.style.setProperty("--fis-voice-translation-y", `${state.translationStyle.voiceOffsetY}px`);
+      }
+      syncTranslationDom();
+    }
+
+    function commitThoughtStyle() {
+      persistLightweightStyles();
+      syncThoughtStyle();
+    }
+
+    function commitTranslationStyle() {
+      persistLightweightStyles();
+      syncTranslationStyle();
     }
 
     function syncThemeScope() {
@@ -739,6 +1517,9 @@ export default {
         root.removeAttribute("data-fis-view-scope");
         root.removeAttribute("data-fis-active-view");
       }
+      syncChatHeaderAvatar();
+      syncToolbarDom();
+      syncTranslationDom();
     }
 
     function apply() {
@@ -778,6 +1559,32 @@ export default {
         root.style.setProperty("--fis-interface-border-color", state.interfaceStyle.borderColor);
         root.style.setProperty("--fis-interface-background", colorWithOpacity(state.interfaceStyle.backgroundColor, state.interfaceStyle.backgroundOpacity));
       }
+      if (state.avatarStyle.enabled) {
+        root.setAttribute("data-fis-avatar-style", "1");
+        root.style.setProperty("--fis-avatar-radius", `${state.avatarStyle.radius}%`);
+        root.style.setProperty("--fis-chat-header-avatar-size", `${state.avatarStyle.headerAvatarSize}px`);
+        root.style.setProperty("--fis-chat-header-avatar-x", `${state.avatarStyle.headerAvatarOffsetX}px`);
+        root.style.setProperty("--fis-chat-header-avatar-y", `${state.avatarStyle.headerAvatarOffsetY}px`);
+        root.style.setProperty("--fis-chat-header-user-avatar-x", `${state.avatarStyle.headerUserAvatarOffsetX}px`);
+        root.style.setProperty("--fis-chat-header-user-avatar-y", `${state.avatarStyle.headerUserAvatarOffsetY}px`);
+        if (state.avatarStyle.borderEnabled) {
+          root.setAttribute("data-fis-avatar-border", "1");
+          root.style.setProperty("--fis-avatar-border-width", `${state.avatarStyle.borderWidth}px`);
+          root.style.setProperty("--fis-avatar-border-color", state.avatarStyle.borderColor);
+        }
+        for (const target of state.avatarStyle.applyTargets) {
+          const suffix = target === "chatRoom" ? "chat-room" : target;
+          root.setAttribute("data-fis-avatar-target-" + suffix, "1");
+        }
+        if (state.avatarStyle.applyTargets.includes("chatRoom")) {
+          root.setAttribute("data-fis-chat-header-align", state.avatarStyle.headerTitleAlign);
+          if (state.avatarStyle.headerAvatarVisible) root.setAttribute("data-fis-chat-header-avatar", "1");
+          if (!state.avatarStyle.chatUserVisible) root.setAttribute("data-fis-hide-chat-user-avatar", "1");
+          if (!state.avatarStyle.chatRoleVisible) root.setAttribute("data-fis-hide-chat-role-avatar", "1");
+        }
+      }
+      syncThoughtStyle();
+      syncTranslationStyle();
       if (state.fontsEnabled) {
         for (const rule of state.fontRules) {
           for (const key of rule.targets) {
@@ -795,6 +1602,23 @@ export default {
         root.style.setProperty("--fis-input-border-width", state.inputStyle.borderless ? "0px" : `${state.inputStyle.borderWidth}px`);
         root.style.setProperty("--fis-input-border-color", state.inputStyle.borderColor);
         root.style.setProperty("--fis-chat-input-width", `${state.inputStyle.chatWidth}%`);
+      }
+      if (state.inputStyle.positionEnabled && state.inputStyle.applyTargets.includes("chatInput")) {
+        root.setAttribute("data-fis-input-position-chat", "1");
+        root.style.setProperty("--fis-chat-input-offset-x", `${state.inputStyle.offsetX}px`);
+        root.style.setProperty("--fis-chat-input-offset-y", `${state.inputStyle.offsetY}px`);
+      }
+      if (state.toolbarStyle.enabled) {
+        root.setAttribute("data-fis-toolbar-style", "1");
+        if (state.toolbarStyle.mergeExpressions) root.setAttribute("data-fis-merge-expressions", "1");
+        if (state.toolbarStyle.hideBuiltinEmojis) root.setAttribute("data-fis-hide-builtin-emojis", "1");
+        for (const [key] of TOOLBAR_ICON_DEFS) {
+          const item = state.toolbarStyle.items[key];
+          const suffix = toolbarIconSuffix(key);
+          root.style.setProperty(`--fis-tool-${suffix}-x`, `${item.offsetX}px`);
+          root.style.setProperty(`--fis-tool-${suffix}-y`, `${item.offsetY}px`);
+          if (!item.visible) root.setAttribute("data-fis-tool-" + suffix + "-hidden", "1");
+        }
       }
       if (state.inputStyle.backgroundMode === "color") {
         if (state.inputStyle.applyTargets.includes("chatInput")) root.setAttribute("data-fis-input-color-chat", "1");
@@ -858,6 +1682,7 @@ export default {
       }
       refreshStyleSheet();
       syncThemeScope();
+      syncToolbarDom();
     }
 
     function refreshAll() {
@@ -865,6 +1690,41 @@ export default {
       for (const refresh of refreshers) {
         try { refresh(); } catch (error) { ctx.system.log("[自定义聊天主题] 设置界面刷新失败", error); }
       }
+    }
+
+    function replaceActiveTheme(snapshot) {
+      const savedThemes = state.themes;
+      const savedSchedule = state.dayNightSchedule;
+      const floatingButtonEnabled = state.floatingButtonEnabled;
+      const floatingButtonTop = state.floatingButtonTop;
+      const next = normalizeState(snapshot);
+      next.themes = savedThemes;
+      next.dayNightSchedule = savedSchedule;
+      next.floatingButtonEnabled = floatingButtonEnabled;
+      next.floatingButtonTop = floatingButtonTop;
+      state = next;
+    }
+
+    function currentDayNightPeriod(now = new Date()) {
+      const hour = now.getHours();
+      return hour >= 6 && hour < 18 ? "day" : "night";
+    }
+
+    function applyDayNightSchedule(force = false) {
+      const schedule = state.dayNightSchedule;
+      if (!schedule.enabled) { lastDayNightKey = ""; return false; }
+      if (!force && floatingMode === "editor") return false;
+      const period = currentDayNightPeriod();
+      const selectedId = period === "day" ? schedule.dayThemeId : schedule.nightThemeId;
+      const selectedTheme = selectedId ? state.themes[selectedId] : null;
+      const snapshot = selectedTheme ? selectedTheme.snapshot : schedule.fallbackSnapshot;
+      const key = `${period}:${selectedTheme ? selectedTheme.id : "current"}`;
+      if (!snapshot || (!force && key === lastDayNightKey)) return false;
+      lastDayNightKey = key;
+      replaceActiveTheme(snapshot);
+      persist();
+      refreshAll();
+      return true;
     }
 
     const floatingButton = document.createElement("button");
@@ -886,6 +1746,7 @@ export default {
     let floatingColorRuleId = "";
     let floatingFontRuleId = "";
     let floatingImageRegionKey = "base";
+    let floatingToolbarIconKey = "offline";
     let floatingDeleteMode = false;
     const floatingDeleteSelection = new Set();
     let floatingMode = "library";
@@ -925,7 +1786,43 @@ export default {
     };
     window.addEventListener("resize", onFloatingResize);
 
+    const resumeTimers = new Set();
+    const scheduleResumeSync = () => {
+      if (document.visibilityState === "hidden") return;
+      applyDayNightSchedule(false);
+      for (const timer of resumeTimers) clearTimeout(timer);
+      resumeTimers.clear();
+      if (expressionProbeTimer) {
+        clearTimeout(expressionProbeTimer);
+        expressionProbeTimer = 0;
+      }
+      expressionProbeStage = "";
+      expressionProbeDeadline = 0;
+      expressionPackProbeComplete = false;
+      for (const delay of [0, 120, 420, 1100]) {
+        const timer = setTimeout(() => {
+          resumeTimers.delete(timer);
+          if (disposed || document.visibilityState === "hidden") return;
+          requestAnimationFrame(() => {
+            if (disposed) return;
+            syncThemeScope();
+            resyncBottomBarGeometry();
+            for (const bar of document.querySelectorAll(".chat-app .chat-room-wrapper .chat-input-bar")) {
+              if (bar instanceof HTMLElement) void bar.getBoundingClientRect();
+            }
+          });
+        }, delay);
+        resumeTimers.add(timer);
+      }
+    };
+    const onVisibilityResume = () => {
+      if (document.visibilityState === "visible") scheduleResumeSync();
+    };
+    document.addEventListener("visibilitychange", onVisibilityResume);
+    window.addEventListener("pageshow", scheduleResumeSync);
+
     const liveIcons = {
+      dayNight: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M18.4 5.6 17 7"/><circle cx="12" cy="12" r="4"/><path d="M15.5 15.5a5 5 0 0 0 3.9-7.9 6.7 6.7 0 0 1-3.9 7.9Z"/></svg>',
       themePlus: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/><path d="M12 7v6M9 10h6"/></svg>',
       plus: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
       trash: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></svg>',
@@ -990,7 +1887,7 @@ export default {
       return overlay;
     };
 
-    const liveRange = (target, key, min, max, step, suffix, deferred = false, preview = null) => {
+    const liveRange = (target, key, min, max, step, suffix, deferred = false, preview = null, commitAction = null) => {
       const pair = document.createElement("div"); pair.className = "fis-range-pair";
       const range = document.createElement("input"); range.type = "range"; range.className = "fis-range";
       range.min = String(min); range.max = String(max); range.step = String(step); range.value = String(target[key]);
@@ -1004,7 +1901,10 @@ export default {
         const value = clamp(source.value, target[key], min, max);
         target[key] = value; source.value = String(value); other.value = String(value); updateProgress();
         if (preview) preview(value);
-        if (commit) { persist(); apply(); }
+        if (commit) {
+          if (commitAction) commitAction();
+          else { persist(); apply(); }
+        }
       };
       updateProgress();
       range.addEventListener("input", () => sync(range, number, !deferred));
@@ -1019,6 +1919,51 @@ export default {
       row.append(label, control); panel.appendChild(row);
     };
 
+    function openDayNightDialog() {
+      document.querySelector(".fis-dialog-overlay")?.remove();
+      const overlay = document.createElement("div"); overlay.className = "fis-dialog-overlay";
+      const dialog = document.createElement("section"); dialog.className = "fis-dialog-card";
+      dialog.setAttribute("role", "dialog"); dialog.setAttribute("aria-modal", "true"); dialog.setAttribute("aria-label", "日夜切换设置");
+      const heading = document.createElement("div"); heading.className = "fis-dialog-title"; heading.textContent = "日夜切换";
+      const content = document.createElement("div"); content.className = "fis-day-night-dialog";
+      const switchRow = document.createElement("div"); switchRow.className = "fis-switch-row";
+      const switchLabel = document.createElement("div"); switchLabel.className = "fis-label"; switchLabel.textContent = "自动切换";
+      switchRow.append(switchLabel, liveSwitch(state.dayNightSchedule.enabled, "根据系统时间自动切换主题", checked => {
+        if (checked && !state.dayNightSchedule.enabled) state.dayNightSchedule.fallbackSnapshot = themeSnapshot(state);
+        state.dayNightSchedule.enabled = checked;
+        lastDayNightKey = "";
+        persist();
+        if (checked) applyDayNightSchedule(true);
+        renderFloating();
+      }));
+      const makeThemeSelect = key => {
+        const select = document.createElement("select"); select.className = "fis-select";
+        const current = document.createElement("option"); current.value = ""; current.textContent = "当前使用"; select.appendChild(current);
+        for (const theme of Object.values(state.themes)) {
+          const option = document.createElement("option"); option.value = theme.id; option.textContent = theme.name; select.appendChild(option);
+        }
+        select.value = state.dayNightSchedule[key];
+        select.addEventListener("change", () => {
+          if (!select.value && state.dayNightSchedule.enabled) state.dayNightSchedule.fallbackSnapshot = themeSnapshot(state);
+          state.dayNightSchedule[key] = select.value;
+          lastDayNightKey = "";
+          persist();
+          if (state.dayNightSchedule.enabled) applyDayNightSchedule(true);
+        });
+        return select;
+      };
+      content.appendChild(switchRow);
+      liveRow(content, "日间", makeThemeSelect("dayThemeId"));
+      liveRow(content, "夜间", makeThemeSelect("nightThemeId"));
+      const hint = document.createElement("div"); hint.className = "fis-day-night-hint";
+      hint.textContent = "按本机时间：06:00 切换日间，18:00 切换夜间；未指定时沿用开启时的当前主题。";
+      content.appendChild(hint);
+      const actions = document.createElement("div"); actions.className = "fis-dialog-actions";
+      actions.appendChild(liveButton("完成", "primary", () => overlay.remove()));
+      dialog.append(heading, content, actions); overlay.appendChild(dialog);
+      (document.body || document.documentElement).appendChild(overlay);
+    }
+
     function syncFloatingUi() {
       if (!state.floatingButtonEnabled) floatingOpen = false;
       floatingButton.hidden = !state.floatingButtonEnabled;
@@ -1028,14 +1973,7 @@ export default {
     }
 
     function loadThemeIntoEditor(theme) {
-      const savedThemes = state.themes;
-      const floatingButtonEnabled = state.floatingButtonEnabled;
-      const floatingButtonTop = state.floatingButtonTop;
-      const next = theme ? normalizeState(theme.snapshot) : defaultState();
-      next.themes = savedThemes;
-      next.floatingButtonEnabled = floatingButtonEnabled;
-      next.floatingButtonTop = floatingButtonTop;
-      state = next;
+      replaceActiveTheme(theme ? theme.snapshot : defaultState());
       editingThemeId = theme ? theme.id : themeId();
       editingThemeName = theme ? theme.name : editingThemeName;
       floatingMode = "editor";
@@ -1197,6 +2135,11 @@ export default {
         const prefix = `theme-${safeArchiveName(theme.id)}`;
         externalizeRegions(theme.snapshot.regions, prefix); externalizeFonts(theme.snapshot.fontRules, prefix);
       }
+      const fallback = exported.dayNightSchedule && exported.dayNightSchedule.fallbackSnapshot;
+      if (fallback) {
+        externalizeRegions(fallback.regions, "day-night-current");
+        externalizeFonts(fallback.fontRules, "day-night-current");
+      }
       const settings = { format: "float-interface-skin-archive", archiveVersion: 1, state: exported };
       files.unshift({ name: "settings.json", data: archiveEncoder.encode(JSON.stringify(settings, null, 2)) });
       const blob = createStoredZip(files);
@@ -1231,8 +2174,13 @@ export default {
         if (!theme || !theme.snapshot) continue;
         restoreRegions(theme.snapshot.regions); restoreFonts(theme.snapshot.fontRules);
       }
+      const fallback = imported.dayNightSchedule && imported.dayNightSchedule.fallbackSnapshot;
+      if (fallback) { restoreRegions(fallback.regions); restoreFonts(fallback.fontRules); }
       state = normalizeState(imported); themeDeleteMode = false; themeDeleteSelection.clear();
-      persist(); refreshAll(); ctx.ui.toast("自定义聊天主题已导入");
+      lastDayNightKey = "";
+      persist();
+      if (!state.dayNightSchedule.enabled || !applyDayNightSchedule(true)) refreshAll();
+      ctx.ui.toast("自定义聊天主题已导入");
     }
 
     function renderFloating() {
@@ -1270,12 +2218,7 @@ export default {
             const actions = document.createElement("div"); actions.className = "fis-theme-library-actions";
             actions.append(
               liveIconButton("check", `应用主题：${theme.name}`, () => {
-                const savedThemes = state.themes;
-                const floatingButtonEnabled = state.floatingButtonEnabled;
-                const floatingButtonTop = state.floatingButtonTop;
-                const next = normalizeState(theme.snapshot);
-                next.themes = savedThemes; next.floatingButtonEnabled = floatingButtonEnabled; next.floatingButtonTop = floatingButtonTop;
-                state = next; persist(); refreshAll(); ctx.ui.toast(`已应用主题：${theme.name}`);
+                replaceActiveTheme(theme.snapshot); persist(); refreshAll(); ctx.ui.toast(`已应用主题：${theme.name}`);
               }, "primary"),
               liveIconButton("settings", `编辑主题：${theme.name}`, () => loadThemeIntoEditor(theme)),
               liveIconButton("pencil", `重命名主题：${theme.name}`, () => {
@@ -1308,6 +2251,7 @@ export default {
         });
         const tools = document.createElement("div"); tools.className = "fis-theme-library-tools";
         tools.append(
+          liveIconButton("dayNight", "日夜切换", openDayNightDialog, state.dayNightSchedule.enabled ? "primary" : ""),
           liveIconButton("upload", "导入主题配置", () => importInput.click()),
           liveIconButton("download", "导出主题配置", () => {
             openFloatingDialog({ title: "导出配置", message: "将设置、图片和字体完整保存为 ZIP 压缩包", confirmLabel: "继续导出", onConfirm: exportThemeConfig });
@@ -1329,6 +2273,9 @@ export default {
               title: "删除主题", message: `确定删除选中的 ${ids.length} 个主题吗？`, confirmLabel: "删除", danger: true,
               onConfirm: () => {
                 for (const id of ids) delete state.themes[id];
+                if (ids.includes(state.dayNightSchedule.dayThemeId)) state.dayNightSchedule.dayThemeId = "";
+                if (ids.includes(state.dayNightSchedule.nightThemeId)) state.dayNightSchedule.nightThemeId = "";
+                lastDayNightKey = "";
                 themeDeleteMode = false; themeDeleteSelection.clear(); persist(); renderFloating();
               },
             });
@@ -1361,7 +2308,7 @@ export default {
       }, "primary");
       const close = document.createElement("button"); close.type = "button"; close.className = "fis-floating-close"; close.textContent = "×";
       close.title = "返回主题库"; close.setAttribute("aria-label", "返回主题库");
-      close.addEventListener("click", () => { floatingMode = "library"; renderFloating(); });
+      close.addEventListener("click", () => { floatingMode = "library"; applyDayNightSchedule(false); renderFloating(); });
       headActions.append(saveTheme, close); head.appendChild(tabs); floatingPanel.append(head, headActions);
       const body = document.createElement("div"); body.className = "fis-floating-body"; floatingPanel.appendChild(body);
 
@@ -1544,8 +2491,385 @@ export default {
           tab.addEventListener("click", () => { floatingInterfacePage = page; renderFloating(); });
           return tab;
         };
-        strip.append(interfaceTab("输入框", "inputs"), interfaceTab("按钮", "buttons"), interfaceTab("主页部件", "cards"));
+        strip.append(interfaceTab("输入框", "inputs"), interfaceTab("工具栏", "toolbar"), interfaceTab("按钮", "buttons"), interfaceTab("主页部件", "cards"), interfaceTab("头像", "avatars"), interfaceTab("心声", "thought"), interfaceTab("翻译", "translation"));
         bar.appendChild(strip); interfaceWorkspace.appendChild(bar); body.appendChild(interfaceWorkspace);
+      }
+
+      if (floatingPage === "interface" && floatingInterfacePage === "avatars") {
+        const avatarStyle = state.avatarStyle;
+        const card = document.createElement("section"); card.className = "fis-input-style-card";
+        liveRow(card, "开关", liveSwitch(avatarStyle.enabled, "头像设置开关", checked => {
+          avatarStyle.enabled = checked; persist(); apply(); renderFloating();
+        }));
+        const panel = document.createElement("div"); panel.className = "fis-input-style-body" + (avatarStyle.enabled ? "" : " disabled");
+
+        const targets = document.createElement("div"); targets.className = "fis-input-targets fis-choice-chips";
+        for (const [key, labelText] of AVATAR_TARGETS) {
+          const option = document.createElement("label"); option.className = "fis-input-target";
+          const checkbox = document.createElement("input"); checkbox.type = "checkbox"; checkbox.checked = avatarStyle.applyTargets.includes(key);
+          checkbox.addEventListener("change", () => {
+            if (checkbox.checked && !avatarStyle.applyTargets.includes(key)) avatarStyle.applyTargets.push(key);
+            if (!checkbox.checked) avatarStyle.applyTargets = avatarStyle.applyTargets.filter(item => item !== key);
+            persist(); apply();
+          });
+          option.append(checkbox, document.createTextNode(labelText)); targets.appendChild(option);
+        }
+        liveRow(panel, "范围", targets);
+        liveRow(panel, "圆角", liveRange(avatarStyle, "radius", 0, 50, 1, "%", true, value => {
+          root.style.setProperty("--fis-avatar-radius", `${value}%`);
+        }));
+
+        const borderFeature = document.createElement("section"); borderFeature.className = "fis-input-feature";
+        const borderHead = document.createElement("div"); borderHead.className = "fis-input-feature-head";
+        const borderTitle = document.createElement("div"); borderTitle.className = "fis-region-name"; borderTitle.textContent = "边框";
+        borderHead.append(borderTitle, liveSwitch(avatarStyle.borderEnabled, "启用头像边框", checked => {
+          avatarStyle.borderEnabled = checked; persist(); apply(); renderFloating();
+        }));
+        const borderBody = document.createElement("div"); borderBody.className = "fis-input-feature-body" + (avatarStyle.borderEnabled ? "" : " disabled");
+        liveRow(borderBody, "粗细", liveRange(avatarStyle, "borderWidth", 0, 8, 0.5, "px", true, value => {
+          root.style.setProperty("--fis-avatar-border-width", `${value}px`);
+        }));
+        const avatarBorderPair = document.createElement("div"); avatarBorderPair.className = "fis-color-pair";
+        const avatarBorderPicker = document.createElement("input"); avatarBorderPicker.type = "color"; avatarBorderPicker.value = avatarStyle.borderColor;
+        const avatarBorderText = document.createElement("input"); avatarBorderText.type = "text"; avatarBorderText.className = "fis-number"; avatarBorderText.maxLength = 7; avatarBorderText.value = avatarStyle.borderColor.toUpperCase();
+        const updateAvatarBorder = (color, commit = true) => {
+          if (!/^#[0-9a-f]{6}$/i.test(color)) return;
+          avatarStyle.borderColor = color.toLowerCase(); avatarBorderPicker.value = avatarStyle.borderColor; avatarBorderText.value = avatarStyle.borderColor.toUpperCase();
+          root.style.setProperty("--fis-avatar-border-color", avatarStyle.borderColor);
+          if (commit) { persist(); apply(); }
+        };
+        avatarBorderPicker.addEventListener("input", () => updateAvatarBorder(avatarBorderPicker.value, false));
+        avatarBorderPicker.addEventListener("change", () => updateAvatarBorder(avatarBorderPicker.value, true));
+        avatarBorderText.addEventListener("change", () => updateAvatarBorder(avatarBorderText.value));
+        avatarBorderText.addEventListener("blur", () => { avatarBorderText.value = avatarStyle.borderColor.toUpperCase(); });
+        avatarBorderPair.append(avatarBorderPicker, avatarBorderText); liveRow(borderBody, "颜色", avatarBorderPair);
+        borderFeature.append(borderHead, borderBody); panel.appendChild(borderFeature);
+
+        const headerFeature = document.createElement("section"); headerFeature.className = "fis-input-feature";
+        const headerHead = document.createElement("div"); headerHead.className = "fis-input-feature-head";
+        const headerTitle = document.createElement("div"); headerTitle.className = "fis-region-name"; headerTitle.textContent = "顶部栏";
+        headerHead.appendChild(headerTitle);
+        const headerBody = document.createElement("div"); headerBody.className = "fis-input-feature-body";
+        const alignSelect = document.createElement("div"); alignSelect.className = "fis-input-targets fis-choice-chips";
+        for (const [value, labelText] of [["center", "居中"], ["left", "靠左"]]) {
+          const option = document.createElement("label"); option.className = "fis-input-target";
+          const radio = document.createElement("input"); radio.type = "radio"; radio.name = "fis-chat-header-align"; radio.value = value; radio.checked = avatarStyle.headerTitleAlign === value;
+          radio.addEventListener("change", () => {
+            if (!radio.checked) return;
+            avatarStyle.headerTitleAlign = value; persist(); apply();
+          });
+          option.append(radio, document.createTextNode(labelText)); alignSelect.appendChild(option);
+        }
+        liveRow(headerBody, "角色名", alignSelect);
+        const sizeRow = document.createElement("div"); sizeRow.className = avatarStyle.headerAvatarVisible || avatarStyle.headerUserAvatarVisible ? "" : "disabled";
+        liveRow(sizeRow, "大小", liveRange(avatarStyle, "headerAvatarSize", 20, 40, 1, "px", true, value => {
+          root.style.setProperty("--fis-chat-header-avatar-size", `${value}px`);
+        }));
+        headerBody.appendChild(sizeRow);
+
+        liveRow(headerBody, "角色头像", liveSwitch(avatarStyle.headerAvatarVisible, "显示顶部栏角色头像", checked => {
+          avatarStyle.headerAvatarVisible = checked; persist(); apply(); renderFloating();
+        }));
+        const rolePosition = document.createElement("div"); rolePosition.className = avatarStyle.headerAvatarVisible ? "" : "disabled";
+        liveRow(rolePosition, "角色水平", liveRange(avatarStyle, "headerAvatarOffsetX", -400, 400, 1, "px", true, value => {
+          root.style.setProperty("--fis-chat-header-avatar-x", `${value}px`);
+        }));
+        liveRow(rolePosition, "角色垂直", liveRange(avatarStyle, "headerAvatarOffsetY", -160, 160, 1, "px", true, value => {
+          root.style.setProperty("--fis-chat-header-avatar-y", `${value}px`);
+        }));
+        headerBody.appendChild(rolePosition);
+
+        liveRow(headerBody, "用户头像", liveSwitch(avatarStyle.headerUserAvatarVisible, "显示顶部栏用户头像", checked => {
+          avatarStyle.headerUserAvatarVisible = checked; persist(); apply(); renderFloating();
+        }));
+        const userPosition = document.createElement("div"); userPosition.className = avatarStyle.headerUserAvatarVisible ? "" : "disabled";
+        liveRow(userPosition, "用户水平", liveRange(avatarStyle, "headerUserAvatarOffsetX", -400, 400, 1, "px", true, value => {
+          root.style.setProperty("--fis-chat-header-user-avatar-x", `${value}px`);
+        }));
+        liveRow(userPosition, "用户垂直", liveRange(avatarStyle, "headerUserAvatarOffsetY", -160, 160, 1, "px", true, value => {
+          root.style.setProperty("--fis-chat-header-user-avatar-y", `${value}px`);
+        }));
+        headerBody.appendChild(userPosition);
+        headerFeature.append(headerHead, headerBody); panel.appendChild(headerFeature);
+
+        const chatFeature = document.createElement("section"); chatFeature.className = "fis-input-feature";
+        const chatHead = document.createElement("div"); chatHead.className = "fis-input-feature-head";
+        const chatTitle = document.createElement("div"); chatTitle.className = "fis-region-name"; chatTitle.textContent = "聊天";
+        chatHead.appendChild(chatTitle);
+        const chatBody = document.createElement("div"); chatBody.className = "fis-input-feature-body";
+        const visibleTargets = document.createElement("div"); visibleTargets.className = "fis-input-targets fis-choice-chips";
+        for (const [key, labelText] of [["chatUserVisible", "用户"], ["chatRoleVisible", "角色"]]) {
+          const option = document.createElement("label"); option.className = "fis-input-target";
+          const checkbox = document.createElement("input"); checkbox.type = "checkbox"; checkbox.checked = avatarStyle[key];
+          checkbox.addEventListener("change", () => { avatarStyle[key] = checkbox.checked; persist(); apply(); });
+          option.append(checkbox, document.createTextNode(labelText)); visibleTargets.appendChild(option);
+        }
+        liveRow(chatBody, "显示", visibleTargets); chatFeature.append(chatHead, chatBody); panel.appendChild(chatFeature);
+        card.appendChild(panel); interfaceWorkspace.appendChild(card);
+      }
+
+      if (floatingPage === "interface" && floatingInterfacePage === "thought") {
+        const thoughtStyle = state.thoughtStyle;
+        const card = document.createElement("section"); card.className = "fis-input-style-card";
+        liveRow(card, "开关", liveSwitch(thoughtStyle.enabled, "心声设置开关", checked => {
+          thoughtStyle.enabled = checked; commitThoughtStyle(); renderFloating();
+        }));
+        const panel = document.createElement("div"); panel.className = "fis-input-style-body" + (thoughtStyle.enabled ? "" : " disabled");
+
+        const appendThoughtColor = (target, label, key, cssVariable, previewValue = null) => {
+          const pair = document.createElement("div"); pair.className = "fis-color-pair";
+          const picker = document.createElement("input"); picker.type = "color"; picker.value = target[key];
+          const textInput = document.createElement("input"); textInput.type = "text"; textInput.className = "fis-number"; textInput.maxLength = 7; textInput.value = target[key].toUpperCase();
+          const update = (color, commit = true) => {
+            if (!/^#[0-9a-f]{6}$/i.test(color)) return;
+            target[key] = color.toLowerCase(); picker.value = target[key]; textInput.value = target[key].toUpperCase();
+            root.style.setProperty(cssVariable, previewValue ? previewValue(target[key]) : target[key]);
+            if (commit) commitThoughtStyle();
+          };
+          picker.addEventListener("input", () => update(picker.value, false));
+          picker.addEventListener("change", () => update(picker.value, true));
+          textInput.addEventListener("change", () => update(textInput.value));
+          textInput.addEventListener("blur", () => { textInput.value = target[key].toUpperCase(); });
+          pair.append(picker, textInput); liveRow(panel, label, pair);
+        };
+
+        appendThoughtColor(thoughtStyle, "背景", "backgroundColor", "--fis-thought-background", color => colorWithOpacity(color, thoughtStyle.backgroundOpacity));
+        liveRow(panel, "透明", liveRange(thoughtStyle, "backgroundOpacity", 0, 100, 1, "%", true, value => {
+          root.style.setProperty("--fis-thought-background", colorWithOpacity(thoughtStyle.backgroundColor, value));
+        }, commitThoughtStyle));
+        liveRow(panel, "圆角", liveRange(thoughtStyle, "radius", 0, 50, 1, "px", true, value => {
+          root.style.setProperty("--fis-thought-radius", `${value}px`);
+        }, commitThoughtStyle));
+        appendThoughtColor(thoughtStyle, "标题", "titleColor", "--fis-thought-title-color");
+        appendThoughtColor(thoughtStyle, "文字", "textColor", "--fis-thought-text-color");
+
+        const borderFeature = document.createElement("section"); borderFeature.className = "fis-input-feature";
+        const borderHead = document.createElement("div"); borderHead.className = "fis-input-feature-head";
+        const borderTitle = document.createElement("div"); borderTitle.className = "fis-region-name"; borderTitle.textContent = "边框";
+        borderHead.append(borderTitle, liveSwitch(thoughtStyle.borderVisible, "显示心声边框", checked => {
+          thoughtStyle.borderVisible = checked; commitThoughtStyle(); renderFloating();
+        }));
+        const borderBody = document.createElement("div"); borderBody.className = "fis-input-feature-body" + (thoughtStyle.borderVisible ? "" : " disabled");
+        liveRow(borderBody, "粗细", liveRange(thoughtStyle, "borderWidth", 0.5, 8, 0.5, "px", true, value => {
+          root.style.setProperty("--fis-thought-border-width", `${value}px`);
+        }, commitThoughtStyle));
+        const appendNestedColor = (container, label, key, cssVariable) => {
+          const pair = document.createElement("div"); pair.className = "fis-color-pair";
+          const picker = document.createElement("input"); picker.type = "color"; picker.value = thoughtStyle[key];
+          const textInput = document.createElement("input"); textInput.type = "text"; textInput.className = "fis-number"; textInput.maxLength = 7; textInput.value = thoughtStyle[key].toUpperCase();
+          const update = (color, commit = true) => {
+            if (!/^#[0-9a-f]{6}$/i.test(color)) return;
+            thoughtStyle[key] = color.toLowerCase(); picker.value = thoughtStyle[key]; textInput.value = thoughtStyle[key].toUpperCase();
+            root.style.setProperty(cssVariable, thoughtStyle[key]);
+            if (commit) commitThoughtStyle();
+          };
+          picker.addEventListener("input", () => update(picker.value, false));
+          picker.addEventListener("change", () => update(picker.value, true));
+          textInput.addEventListener("change", () => update(textInput.value));
+          textInput.addEventListener("blur", () => { textInput.value = thoughtStyle[key].toUpperCase(); });
+          pair.append(picker, textInput); liveRow(container, label, pair);
+        };
+        appendNestedColor(borderBody, "颜色", "borderColor", "--fis-thought-border-color");
+        borderFeature.append(borderHead, borderBody); panel.appendChild(borderFeature);
+
+        const tapeFeature = document.createElement("section"); tapeFeature.className = "fis-input-feature";
+        const tapeHead = document.createElement("div"); tapeHead.className = "fis-input-feature-head";
+        const tapeTitle = document.createElement("div"); tapeTitle.className = "fis-region-name"; tapeTitle.textContent = "胶带";
+        tapeHead.append(tapeTitle, liveSwitch(thoughtStyle.tapeVisible, "显示心声胶带", checked => {
+          thoughtStyle.tapeVisible = checked; commitThoughtStyle(); renderFloating();
+        }));
+        const tapeBody = document.createElement("div"); tapeBody.className = "fis-input-feature-body" + (thoughtStyle.tapeVisible ? "" : " disabled");
+        appendNestedColor(tapeBody, "左侧", "tapeLeftColor", "--fis-thought-tape-left");
+        appendNestedColor(tapeBody, "右侧", "tapeRightColor", "--fis-thought-tape-right");
+        tapeFeature.append(tapeHead, tapeBody); panel.appendChild(tapeFeature);
+
+        const valuesFeature = document.createElement("section"); valuesFeature.className = "fis-input-feature";
+        const valuesHead = document.createElement("div"); valuesHead.className = "fis-input-feature-head";
+        const valuesTitle = document.createElement("div"); valuesTitle.className = "fis-region-name"; valuesTitle.textContent = "数值条";
+        valuesHead.appendChild(valuesTitle);
+        const valuesBody = document.createElement("div"); valuesBody.className = "fis-input-feature-body";
+        appendNestedColor(valuesBody, "轨道", "valueTrackColor", "--fis-thought-value-track");
+        appendNestedColor(valuesBody, "数值", "valueFillColor", "--fis-thought-value-fill");
+        valuesFeature.append(valuesHead, valuesBody); panel.appendChild(valuesFeature);
+
+        const iconFeature = document.createElement("section"); iconFeature.className = "fis-input-feature";
+        const iconHead = document.createElement("div"); iconHead.className = "fis-input-feature-head";
+        const iconTitle = document.createElement("div"); iconTitle.className = "fis-region-name"; iconTitle.textContent = "心声符号";
+        iconHead.appendChild(iconTitle);
+        const iconBody = document.createElement("div"); iconBody.className = "fis-input-feature-body";
+        appendNestedColor(iconBody, "颜色", "iconColor", "--fis-thought-icon-color");
+        liveRow(iconBody, "水平", liveRange(thoughtStyle, "iconOffsetX", -400, 400, 1, "px", true, value => {
+          root.style.setProperty("--fis-thought-icon-x", `${value}px`);
+        }, commitThoughtStyle));
+        liveRow(iconBody, "垂直", liveRange(thoughtStyle, "iconOffsetY", -160, 160, 1, "px", true, value => {
+          root.style.setProperty("--fis-thought-icon-y", `${value}px`);
+        }, commitThoughtStyle));
+        iconFeature.append(iconHead, iconBody); panel.appendChild(iconFeature);
+
+        card.appendChild(panel); interfaceWorkspace.appendChild(card);
+      }
+
+      if (floatingPage === "interface" && floatingInterfacePage === "translation") {
+        const translationStyle = state.translationStyle;
+        const card = document.createElement("section"); card.className = "fis-input-style-card";
+        liveRow(card, "开关", liveSwitch(translationStyle.enabled, "翻译显示设置开关", checked => {
+          translationStyle.enabled = checked; commitTranslationStyle(); renderFloating();
+        }));
+        const panel = document.createElement("div"); panel.className = "fis-input-style-body" + (translationStyle.enabled ? "" : " disabled");
+        const appendTranslationColor = (container, label, key, cssVariable) => {
+          const pair = document.createElement("div"); pair.className = "fis-color-pair";
+          const picker = document.createElement("input"); picker.type = "color"; picker.value = translationStyle[key];
+          const textInput = document.createElement("input"); textInput.type = "text"; textInput.className = "fis-number"; textInput.maxLength = 7; textInput.value = translationStyle[key].toUpperCase();
+          const update = (color, commit = true) => {
+            if (!/^#[0-9a-f]{6}$/i.test(color)) return;
+            translationStyle[key] = color.toLowerCase(); picker.value = translationStyle[key]; textInput.value = translationStyle[key].toUpperCase();
+            root.style.setProperty(cssVariable, translationStyle[key]);
+            if (commit) commitTranslationStyle();
+          };
+          picker.addEventListener("input", () => update(picker.value, false));
+          picker.addEventListener("change", () => update(picker.value, true));
+          textInput.addEventListener("change", () => update(textInput.value));
+          textInput.addEventListener("blur", () => { textInput.value = translationStyle[key].toUpperCase(); });
+          pair.append(picker, textInput); liveRow(container, label, pair);
+        };
+        liveRow(panel, "常显", liveSwitch(translationStyle.alwaysVisible, "始终展开中文翻译", checked => {
+          translationStyle.alwaysVisible = checked; commitTranslationStyle(); renderFloating();
+        }));
+        const layoutSelect = document.createElement("div"); layoutSelect.className = "fis-input-targets fis-choice-chips";
+        for (const [value, labelText] of [["inside", "气泡内"], ["outside", "气泡外"]]) {
+          const option = document.createElement("label"); option.className = "fis-input-target";
+          const radio = document.createElement("input"); radio.type = "radio"; radio.name = "fis-translation-layout"; radio.value = value; radio.checked = translationStyle.layoutMode === value;
+          radio.addEventListener("change", () => {
+            if (!radio.checked) return;
+            translationStyle.layoutMode = value; commitTranslationStyle();
+          });
+          option.append(radio, document.createTextNode(labelText)); layoutSelect.appendChild(option);
+        }
+        liveRow(panel, "模式", layoutSelect);
+        liveRow(panel, "分隔线", liveSwitch(translationStyle.dividerVisible, "显示原文与译文分隔线", checked => {
+          translationStyle.dividerVisible = checked; commitTranslationStyle();
+        }));
+        liveRow(panel, "粗体", liveSwitch(translationStyle.bold, "翻译使用粗体", checked => {
+          translationStyle.bold = checked; commitTranslationStyle();
+        }));
+
+        const colorPair = document.createElement("div"); colorPair.className = "fis-color-pair";
+        const colorPicker = document.createElement("input"); colorPicker.type = "color"; colorPicker.value = translationStyle.color;
+        const colorText = document.createElement("input"); colorText.type = "text"; colorText.className = "fis-number"; colorText.maxLength = 7; colorText.value = translationStyle.color.toUpperCase();
+        const updateTranslationColor = (color, commit = true) => {
+          if (!/^#[0-9a-f]{6}$/i.test(color)) return;
+          translationStyle.color = color.toLowerCase(); colorPicker.value = translationStyle.color; colorText.value = translationStyle.color.toUpperCase();
+          root.style.setProperty("--fis-translation-color", translationStyle.color);
+          if (commit) commitTranslationStyle();
+        };
+        colorPicker.addEventListener("input", () => updateTranslationColor(colorPicker.value, false));
+        colorPicker.addEventListener("change", () => updateTranslationColor(colorPicker.value, true));
+        colorText.addEventListener("change", () => updateTranslationColor(colorText.value));
+        colorText.addEventListener("blur", () => { colorText.value = translationStyle.color.toUpperCase(); });
+        colorPair.append(colorPicker, colorText); liveRow(panel, "颜色", colorPair);
+        liveRow(panel, "阴影", liveSwitch(translationStyle.shadowEnabled, "显示译文文字阴影", checked => {
+          translationStyle.shadowEnabled = checked; commitTranslationStyle();
+        }));
+        const shadowPair = document.createElement("div"); shadowPair.className = "fis-color-pair";
+        const shadowPicker = document.createElement("input"); shadowPicker.type = "color"; shadowPicker.value = translationStyle.shadowColor;
+        const shadowText = document.createElement("input"); shadowText.type = "text"; shadowText.className = "fis-number"; shadowText.maxLength = 7; shadowText.value = translationStyle.shadowColor.toUpperCase();
+        const updateTranslationShadow = (color, commit = true) => {
+          if (!/^#[0-9a-f]{6}$/i.test(color)) return;
+          translationStyle.shadowColor = color.toLowerCase(); shadowPicker.value = translationStyle.shadowColor; shadowText.value = translationStyle.shadowColor.toUpperCase();
+          root.style.setProperty("--fis-translation-shadow", translationStyle.shadowColor);
+          if (commit) commitTranslationStyle();
+        };
+        shadowPicker.addEventListener("input", () => updateTranslationShadow(shadowPicker.value, false));
+        shadowPicker.addEventListener("change", () => updateTranslationShadow(shadowPicker.value, true));
+        shadowText.addEventListener("change", () => updateTranslationShadow(shadowText.value));
+        shadowText.addEventListener("blur", () => { shadowText.value = translationStyle.shadowColor.toUpperCase(); });
+        shadowPair.append(shadowPicker, shadowText); liveRow(panel, "阴影色", shadowPair);
+        liveRow(panel, "大小", liveRange(translationStyle, "size", 60, 160, 1, "%", true, value => {
+          root.style.setProperty("--fis-translation-size", `${value / 100}em`);
+        }, commitTranslationStyle));
+        liveRow(panel, "水平", liveRange(translationStyle, "offsetX", -400, 400, 1, "px", true, value => {
+          root.style.setProperty("--fis-translation-x", `${value}px`);
+        }, commitTranslationStyle));
+        liveRow(panel, "垂直", liveRange(translationStyle, "offsetY", -160, 160, 1, "px", true, value => {
+          root.style.setProperty("--fis-translation-y", `${value}px`);
+        }, commitTranslationStyle));
+
+        const backgroundFeature = document.createElement("section"); backgroundFeature.className = "fis-input-feature";
+        const backgroundHead = document.createElement("div"); backgroundHead.className = "fis-input-feature-head";
+        const backgroundTitle = document.createElement("div"); backgroundTitle.className = "fis-region-name"; backgroundTitle.textContent = "背景";
+        backgroundHead.append(backgroundTitle, liveSwitch(translationStyle.backgroundEnabled, "显示译文背景", checked => {
+          translationStyle.backgroundEnabled = checked; commitTranslationStyle(); renderFloating();
+        }));
+        const backgroundBody = document.createElement("div"); backgroundBody.className = "fis-input-feature-body" + (translationStyle.backgroundEnabled ? "" : " disabled");
+        appendTranslationColor(backgroundBody, "颜色", "backgroundColor", "--fis-translation-background");
+        liveRow(backgroundBody, "圆角", liveRange(translationStyle, "backgroundRadius", 0, 50, 1, "px", true, value => {
+          root.style.setProperty("--fis-translation-background-radius", `${value}px`);
+        }, commitTranslationStyle));
+        backgroundFeature.append(backgroundHead, backgroundBody); panel.appendChild(backgroundFeature);
+
+        const voiceFeature = document.createElement("section"); voiceFeature.className = "fis-input-feature";
+        const voiceHead = document.createElement("div"); voiceHead.className = "fis-input-feature-head";
+        const voiceTitle = document.createElement("div"); voiceTitle.className = "fis-region-name"; voiceTitle.textContent = "语音";
+        voiceHead.appendChild(voiceTitle);
+        const voiceBody = document.createElement("div"); voiceBody.className = "fis-input-feature-body";
+        liveRow(voiceBody, "背景", liveSwitch(translationStyle.voiceBackgroundEnabled, "显示语音译文背景", checked => {
+          translationStyle.voiceBackgroundEnabled = checked; commitTranslationStyle(); renderFloating();
+        }));
+        const voiceBackgroundBody = document.createElement("div"); voiceBackgroundBody.className = "fis-input-feature-body" + (translationStyle.voiceBackgroundEnabled ? "" : " disabled");
+        appendTranslationColor(voiceBackgroundBody, "颜色", "voiceBackgroundColor", "--fis-voice-translation-background");
+        liveRow(voiceBackgroundBody, "圆角", liveRange(translationStyle, "voiceBackgroundRadius", 0, 50, 1, "px", true, value => {
+          root.style.setProperty("--fis-voice-translation-background-radius", `${value}px`);
+        }, commitTranslationStyle));
+        voiceBody.appendChild(voiceBackgroundBody);
+        liveRow(voiceBody, "水平", liveRange(translationStyle, "voiceOffsetX", -400, 400, 1, "px", true, value => {
+          root.style.setProperty("--fis-voice-translation-x", `${value}px`);
+        }, commitTranslationStyle));
+        liveRow(voiceBody, "垂直", liveRange(translationStyle, "voiceOffsetY", -160, 160, 1, "px", true, value => {
+          root.style.setProperty("--fis-voice-translation-y", `${value}px`);
+        }, commitTranslationStyle));
+        voiceFeature.append(voiceHead, voiceBody); panel.appendChild(voiceFeature);
+        const hint = document.createElement("div"); hint.className = "fis-region-hint"; hint.textContent = "常显会自动展开译文；文字阴影仅在气泡外模式生效。"; panel.appendChild(hint);
+        card.appendChild(panel); interfaceWorkspace.appendChild(card);
+      }
+
+      if (floatingPage === "interface" && floatingInterfacePage === "toolbar") {
+        const toolbarStyle = state.toolbarStyle;
+        if (!toolbarStyle.items[floatingToolbarIconKey]) floatingToolbarIconKey = TOOLBAR_ICON_DEFS[0][0];
+        const item = toolbarStyle.items[floatingToolbarIconKey];
+        const card = document.createElement("section"); card.className = "fis-input-style-card";
+        liveRow(card, "开关", liveSwitch(toolbarStyle.enabled, "工具栏设置开关", checked => {
+          toolbarStyle.enabled = checked; persist(); apply(); renderFloating();
+        }));
+        const panel = document.createElement("div"); panel.className = "fis-input-style-body" + (toolbarStyle.enabled ? "" : " disabled");
+        liveRow(panel, "合并表情", liveSwitch(toolbarStyle.mergeExpressions, "合并自带与导入表情", checked => {
+          toolbarStyle.mergeExpressions = checked; persist(); apply(); renderFloating();
+        }));
+        liveRow(panel, "隐藏自带", liveSwitch(toolbarStyle.hideBuiltinEmojis, "隐藏特效以外的自带表情", checked => {
+          toolbarStyle.hideBuiltinEmojis = checked; persist(); apply(); renderFloating();
+        }));
+        const hint = document.createElement("div"); hint.className = "fis-region-hint"; hint.textContent = "导入分组接在自带分类后；隐藏自带时保留特效。"; panel.appendChild(hint);
+        const appendIconTabs = (label, defs) => {
+          const iconTabs = document.createElement("div"); iconTabs.className = "fis-input-targets fis-choice-chips";
+          for (const [key, labelText] of defs) {
+            const option = document.createElement("label"); option.className = "fis-input-target";
+            const radio = document.createElement("input"); radio.type = "radio"; radio.name = "fis-toolbar-icon"; radio.checked = key === floatingToolbarIconKey;
+            radio.addEventListener("change", () => { if (radio.checked) { floatingToolbarIconKey = key; renderFloating(); } });
+            option.append(radio, document.createTextNode(labelText)); iconTabs.appendChild(option);
+          }
+          liveRow(panel, label, iconTabs);
+        };
+        appendIconTabs("线上", ONLINE_TOOLBAR_ICON_DEFS);
+        appendIconTabs("线下", OFFLINE_TOOLBAR_ICON_DEFS);
+        liveRow(panel, "显示", liveSwitch(item.visible, "显示当前图标", checked => {
+          item.visible = checked; persist(); apply(); renderFloating();
+        }));
+        liveRow(panel, "水平", liveRange(item, "offsetX", -400, 400, 1, "px", true, value => {
+          root.style.setProperty(`--fis-tool-${toolbarIconSuffix(floatingToolbarIconKey)}-x`, `${value}px`);
+        }));
+        liveRow(panel, "垂直", liveRange(item, "offsetY", -120, 120, 1, "px", true, value => {
+          root.style.setProperty(`--fis-tool-${toolbarIconSuffix(floatingToolbarIconKey)}-y`, `${value}px`);
+        }));
+        card.appendChild(panel); interfaceWorkspace.appendChild(card);
       }
 
       if (floatingPage === "interface" && floatingInterfacePage === "buttons") {
@@ -1773,7 +3097,22 @@ export default {
         colorText.addEventListener("change", () => updateBorderColor(colorText.value));
         colorText.addEventListener("blur", () => { colorText.value = inputStyle.borderColor.toUpperCase(); });
         colorPair.append(colorPicker, colorText); liveRow(panel, "边框", colorPair);
-        shapeFeature.append(shapeFeatureHead, panel); card.appendChild(shapeFeature); interfaceWorkspace.appendChild(card);
+        shapeFeature.append(shapeFeatureHead, panel); card.appendChild(shapeFeature);
+
+        const positionFeature = document.createElement("section"); positionFeature.className = "fis-input-feature";
+        const positionHead = document.createElement("div"); positionHead.className = "fis-input-feature-head";
+        const positionTitle = document.createElement("div"); positionTitle.className = "fis-region-name"; positionTitle.textContent = "位置";
+        positionHead.append(positionTitle, liveSwitch(inputStyle.positionEnabled, "启用聊天输入框位置", checked => {
+          inputStyle.positionEnabled = checked; persist(); apply(); renderFloating();
+        }));
+        const positionBody = document.createElement("div"); positionBody.className = "fis-input-feature-body" + (inputStyle.positionEnabled ? "" : " disabled");
+        liveRow(positionBody, "水平", liveRange(inputStyle, "offsetX", -120, 120, 1, "px", true, value => {
+          root.style.setProperty("--fis-chat-input-offset-x", `${value}px`);
+        }));
+        liveRow(positionBody, "垂直", liveRange(inputStyle, "offsetY", -120, 120, 1, "px", true, value => {
+          root.style.setProperty("--fis-chat-input-offset-y", `${value}px`);
+        }));
+        positionFeature.append(positionHead, positionBody); card.appendChild(positionFeature); interfaceWorkspace.appendChild(card);
       }
 
       if (floatingPage === "images") {
@@ -1956,13 +3295,24 @@ export default {
     refreshers.add(renderFloating);
     renderFloating();
 
-    const scopeObserver = new MutationObserver(syncThemeScope);
+    let scopeSyncFrame = 0;
+    const scopeObserver = new MutationObserver(records => {
+      const relevant = records.some(record => {
+        const target = record.target;
+        return target !== floatingPanel && !floatingPanel.contains(target) && target !== floatingButton && !floatingButton.contains(target);
+      });
+      if (!relevant || scopeSyncFrame) return;
+      scopeSyncFrame = requestAnimationFrame(() => {
+        scopeSyncFrame = 0;
+        syncThemeScope();
+      });
+    });
     if (document.body) {
       scopeObserver.observe(document.body, {
         childList: true,
         subtree: true,
         attributes: true,
-        attributeFilter: ["data-settings-open", "class", "style", "hidden", "aria-hidden"],
+        attributeFilter: ["data-settings-open", "class", "style", "hidden", "aria-hidden", "title", "aria-label", "disabled"],
       });
     }
 
@@ -2248,11 +3598,7 @@ export default {
             const actions = document.createElement("div"); actions.className = "fis-theme-actions";
             actions.append(
               iconButton("check", `应用主题：${theme.name}`, () => {
-                const savedThemes = state.themes;
-                const floatingButtonEnabled = state.floatingButtonEnabled;
-                const next = normalizeState(theme.snapshot);
-                next.themes = savedThemes; next.floatingButtonEnabled = floatingButtonEnabled;
-                state = next; persist(); refreshAll(); ctx.ui.toast(`已应用主题：${theme.name}`);
+                replaceActiveTheme(theme.snapshot); persist(); refreshAll(); ctx.ui.toast(`已应用主题：${theme.name}`);
               }, "primary"),
               iconButton("save", `用当前设置覆盖：${theme.name}`, () => {
                 openFloatingDialog({
@@ -2281,7 +3627,13 @@ export default {
                   message: `确定删除“${theme.name}”吗？此操作无法撤销。`,
                   confirmLabel: "删除",
                   danger: true,
-                  onConfirm: () => { delete state.themes[theme.id]; persist(); render(); },
+                  onConfirm: () => {
+                    delete state.themes[theme.id];
+                    if (state.dayNightSchedule.dayThemeId === theme.id) state.dayNightSchedule.dayThemeId = "";
+                    if (state.dayNightSchedule.nightThemeId === theme.id) state.dayNightSchedule.nightThemeId = "";
+                    lastDayNightKey = "";
+                    persist(); render();
+                  },
                 });
               }, "danger")
             );
@@ -2370,8 +3722,38 @@ export default {
     });
 
     apply();
+    if (state.dayNightSchedule.enabled) applyDayNightSchedule(true);
+    dayNightTimer = window.setInterval(() => applyDayNightSchedule(false), 30000);
+    void loadLightweightStyles().then(saved => {
+      if (disposed || !saved || typeof saved !== "object") return;
+      const normalized = normalizeState(saved);
+      if (saved.thoughtStyle && typeof saved.thoughtStyle === "object") state.thoughtStyle = normalized.thoughtStyle;
+      if (saved.translationStyle && typeof saved.translationStyle === "object") state.translationStyle = normalized.translationStyle;
+      syncThoughtStyle();
+      syncTranslationStyle();
+      for (const refresh of refreshers) {
+        try { refresh(); } catch (error) { ctx.system.log("[自定义聊天主题] 轻量样式界面刷新失败", error); }
+      }
+    });
     ctx.hooks.on("app.ready", apply);
-    ctx.hooks.on("session.opened", apply);
+    ctx.hooks.on("session.opened", payload => {
+      activeSessionId = payload && payload.sessionId ? String(payload.sessionId) : "";
+      lastUserHeaderAvatar = "";
+      userHeaderAvatarProbe = null;
+      userHeaderAvatarProbeSession = "";
+      expressionBuiltinLabels = [];
+      expressionPackLabels = [];
+      expressionPackProbeComplete = false;
+      expressionProbeStage = "";
+      expressionProbeDeadline = 0;
+      if (expressionProbeTimer) {
+        clearTimeout(expressionProbeTimer);
+        expressionProbeTimer = 0;
+      }
+      pendingBuiltinIndex = null;
+      pendingPackIndex = null;
+      apply();
+    });
 
     return () => {
       disposed = true;
@@ -2381,10 +3763,25 @@ export default {
       for (const objectUrl of imageObjectUrls.values()) URL.revokeObjectURL(objectUrl);
       imageObjectUrls.clear();
       window.removeEventListener("resize", onFloatingResize);
+      document.removeEventListener("visibilitychange", onVisibilityResume);
+      window.removeEventListener("pageshow", scheduleResumeSync);
+      for (const timer of resumeTimers) clearTimeout(timer);
+      resumeTimers.clear();
+      if (dayNightTimer) clearInterval(dayNightTimer);
+      if (expressionProbeTimer) clearTimeout(expressionProbeTimer);
       scopeObserver.disconnect();
+      if (scopeSyncFrame) cancelAnimationFrame(scopeSyncFrame);
       root.removeAttribute("data-fis-view-scope");
       root.removeAttribute("data-fis-background-scope");
       clearApplied();
+      document.querySelectorAll("[data-fis-tool-icon]").forEach(node => node.removeAttribute("data-fis-tool-icon"));
+      document.querySelectorAll(".fis-expression-switch").forEach(node => node.remove());
+      document.querySelectorAll(".fis-expression-proxy").forEach(node => node.remove());
+      document.querySelectorAll(".fis-expression-panel").forEach(node => {
+        node.classList.remove("fis-expression-panel");
+        node.removeAttribute("data-fis-expression-kind");
+        node.querySelectorAll("[data-fis-expression-effect]").forEach(button => button.removeAttribute("data-fis-expression-effect"));
+      });
       floatingButton.remove();
       floatingPanel.remove();
       document.querySelector(".fis-dialog-overlay")?.remove();

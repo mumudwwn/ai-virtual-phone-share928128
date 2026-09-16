@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-16T05:23:17.302Z",
+  "generatedAt": "2026-09-16T05:24:13.583Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -2860,7 +2860,7 @@
     },
     {
       "folder": "应用",
-      "name": "土豆放映室（9月15日更新）",
+      "name": "土豆放映室（9月16日更新）",
       "dirName": "土豆放映室",
       "type": "dir",
       "path": "资源/应用/土豆放映室",
@@ -2876,7 +2876,7 @@
       "author": "格林猫咪",
       "avatar": "",
       "ownerHash": "c03468531fd6615b3bc9dde0e42c77bf4ff654590ed8ac5e955e1905b58bc44c",
-      "updatedAt": "2026-09-16T13:22:26+08:00"
+      "updatedAt": "2026-09-16T13:23:14+08:00"
     },
     {
       "folder": "应用",

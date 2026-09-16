@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-15T20:36:06.185Z",
+  "generatedAt": "2026-09-16T01:49:30.895Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -21,7 +21,7 @@
     },
     {
       "name": "全局主题",
-      "count": 8
+      "count": 9
     },
     {
       "name": "剧情预设及正则",
@@ -1562,6 +1562,26 @@
       "avatar": "资源/全局主题/天气蒙蒙，你也萌萌/.avatar.png",
       "ownerHash": "55b5ed5e0fd76e790cc1a3022e1c903518df025162aae4a51f310af986e93e50",
       "updatedAt": "2026-09-13T21:03:54+08:00"
+    },
+    {
+      "folder": "全局主题",
+      "name": "栖于粉云之间",
+      "dirName": "栖于粉云之间",
+      "type": "dir",
+      "path": "资源/全局主题/栖于粉云之间",
+      "files": [
+        "资源/全局主题/栖于粉云之间/栖于粉云之间.zip"
+      ],
+      "images": [
+        "资源/全局主题/栖于粉云之间/2742.png",
+        "资源/全局主题/栖于粉云之间/2743.png",
+        "资源/全局主题/栖于粉云之间/2744.png"
+      ],
+      "description": "一个粉粉的主题～",
+      "author": "葉夜",
+      "avatar": "资源/全局主题/栖于粉云之间/.avatar.png",
+      "ownerHash": "0827fbb9d2b729bc932ed6aea17c80c85b4975ccc234e6ed12c6687b181966a8",
+      "updatedAt": "2026-09-16T09:48:38+08:00"
     },
     {
       "folder": "全局主题",

@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-16T08:56:23.522Z",
+  "generatedAt": "2026-09-16T11:03:57.956Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -21,7 +21,7 @@
     },
     {
       "name": "全局主题",
-      "count": 9
+      "count": 10
     },
     {
       "name": "剧情预设及正则",
@@ -1652,6 +1652,25 @@
       "avatar": "资源/全局主题/水色/.avatar.png",
       "ownerHash": "039af75efda3b1a0ba536b59c77cc2e2603d5a91c80b5420ec4cdf75305d12d2",
       "updatedAt": "2026-09-04T19:43:58+08:00"
+    },
+    {
+      "folder": "全局主题",
+      "name": "甜品集",
+      "dirName": "甜品集",
+      "type": "dir",
+      "path": "资源/全局主题/甜品集",
+      "files": [
+        "资源/全局主题/甜品集/甜品集.zip"
+      ],
+      "images": [
+        "资源/全局主题/甜品集/IMG_185417.webp",
+        "资源/全局主题/甜品集/IMG_185509.webp"
+      ],
+      "description": "素材源topwidgets\n头像什么的自己改一下哦！",
+      "author": "Mist.Y",
+      "avatar": "",
+      "ownerHash": "43224a5b025a8c0806c7627788ca68c323ea274cf2e5641d5dcc5170d3bf2b43",
+      "updatedAt": "2026-09-16T19:03:03+08:00"
     },
     {
       "folder": "全局主题",

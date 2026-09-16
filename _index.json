@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-16T05:19:20.462Z",
+  "generatedAt": "2026-09-16T05:20:41.374Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -2865,6 +2865,7 @@
       "type": "dir",
       "path": "资源/应用/土豆放映室",
       "files": [
+        "资源/应用/土豆放映室/potato.theater-1.0.0.zip",
         "资源/应用/土豆放映室/potato.theater-1.1.0.zip"
       ],
       "images": [
@@ -2875,7 +2876,7 @@
       "author": "格林猫咪",
       "avatar": "",
       "ownerHash": "c03468531fd6615b3bc9dde0e42c77bf4ff654590ed8ac5e955e1905b58bc44c",
-      "updatedAt": "2026-09-16T13:18:42+08:00"
+      "updatedAt": "2026-09-16T13:19:54+08:00"
     },
     {
       "folder": "应用",

@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-16T06:15:33.791Z",
+  "generatedAt": "2026-09-16T06:35:05.132Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -9,7 +9,7 @@
     },
     {
       "name": "Js插件",
-      "count": 47
+      "count": 48
     },
     {
       "name": "MCP",
@@ -941,6 +941,22 @@
       "avatar": "",
       "ownerHash": "ccaecc009bf4a4f670f01f93005ebb7e60c8d958fe2449025a41e1609ae3e4cd",
       "updatedAt": "2026-09-01T23:47:51+08:00"
+    },
+    {
+      "folder": "Js插件",
+      "name": "隐藏时间戳[蝴蝶结]",
+      "dirName": "隐藏时间戳[蝴蝶结]",
+      "type": "dir",
+      "path": "资源/Js插件/隐藏时间戳[蝴蝶结]",
+      "files": [
+        "资源/Js插件/隐藏时间戳[蝴蝶结]/时间戳.js"
+      ],
+      "images": [],
+      "description": "因为回复的很慢总是冒出这个就做了一个隐藏的插件，没啥用。\n鞭打ds做出来的，可自行二改。",
+      "author": "来一块饼干",
+      "avatar": "",
+      "ownerHash": "3e0ec61fd7ded8cb44109b9f96e9b2adf46a14c2c6b61afae80c3841125d2043",
+      "updatedAt": "2026-09-16T14:34:11+08:00"
     },
     {
       "folder": "Js插件",

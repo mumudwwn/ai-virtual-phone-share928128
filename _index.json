@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-17T15:37:07.028Z",
+  "generatedAt": "2026-09-17T15:44:26.424Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -5993,12 +5993,14 @@
       "files": [
         "资源/表情包/HelloKitty表情包/HelloKitty表情（有预览）by云遇.docx"
       ],
-      "images": [],
+      "images": [
+        "资源/表情包/HelloKitty表情包/1000073437.jpg"
+      ],
       "description": "图源网络，随意二改",
       "author": "云遇",
       "avatar": "",
       "ownerHash": "b4f8122c2c864ab59b9b44d3ac94bc675d36ed06adce337dbbaa28b94d488a99",
-      "updatedAt": "2026-09-17T23:36:05+08:00"
+      "updatedAt": "2026-09-17T23:43:31+08:00"
     },
     {
       "folder": "表情包",

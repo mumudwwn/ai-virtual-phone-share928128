@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-17T02:40:18.054Z",
+  "generatedAt": "2026-09-17T04:06:16.854Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -9,7 +9,7 @@
     },
     {
       "name": "Js插件",
-      "count": 48
+      "count": 49
     },
     {
       "name": "MCP",
@@ -328,6 +328,22 @@
       "avatar": "资源/Js插件/反查岗/.avatar.png",
       "ownerHash": "1d9cea70e311b630e92234fd8993a1076198434564b88f424df0aba8970847f4",
       "updatedAt": "2026-08-19T22:46:36+08:00"
+    },
+    {
+      "folder": "Js插件",
+      "name": "反查手机共享屏幕",
+      "dirName": "反查手机共享屏幕",
+      "type": "dir",
+      "path": "资源/Js插件/反查手机共享屏幕",
+      "files": [
+        "资源/Js插件/反查手机共享屏幕/5.0.10-反查手机共享屏幕.js"
+      ],
+      "images": [],
+      "description": "",
+      "author": "",
+      "avatar": "",
+      "ownerHash": "a3e8f7a81a5fac289e40f96621b11901cd1b62d50ef20b209b428c924341ca8a",
+      "updatedAt": "2026-09-17T12:05:33+08:00"
     },
     {
       "folder": "Js插件",

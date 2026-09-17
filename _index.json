@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-17T01:52:28.799Z",
+  "generatedAt": "2026-09-17T02:38:36.079Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -73,7 +73,7 @@
     },
     {
       "name": "线上聊天状态栏",
-      "count": 15
+      "count": 16
     },
     {
       "name": "线下正则",
@@ -5693,6 +5693,22 @@
       "avatar": "",
       "ownerHash": "2df22f4332d991025ff8bdc44bfd1e60b11f54cdf952e93af836e1418b0ad7a1",
       "updatedAt": "2026-09-02T15:54:25+08:00"
+    },
+    {
+      "folder": "线上聊天状态栏",
+      "name": "哈",
+      "dirName": "哈",
+      "type": "dir",
+      "path": "资源/线上聊天状态栏/哈",
+      "files": [
+        "资源/线上聊天状态栏/哈/复古5s微信绿绿by小池.txt"
+      ],
+      "images": [],
+      "description": "",
+      "author": "",
+      "avatar": "",
+      "ownerHash": "5b5f58a5f0a6b8aa900c3ba8248cc1f94e67a56449c80ef10536b36dfc2490db",
+      "updatedAt": "2026-09-17T10:37:46+08:00"
     },
     {
       "folder": "线上聊天状态栏",

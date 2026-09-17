@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-17T04:06:16.854Z",
+  "generatedAt": "2026-09-17T04:21:31.917Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -33,7 +33,7 @@
     },
     {
       "name": "应用",
-      "count": 106
+      "count": 107
     },
     {
       "name": "应用bug改善",
@@ -3600,6 +3600,25 @@
       "avatar": "资源/应用/童话漫游地图/.avatar.png",
       "ownerHash": "0a749ba0d9d6e3baf931f4b89d8da425790803eaed267f9a1a1aad36f47e2a8f",
       "updatedAt": "2026-08-22T09:35:37+08:00"
+    },
+    {
+      "folder": "应用",
+      "name": "答案之书",
+      "dirName": "答案之书",
+      "type": "dir",
+      "path": "资源/应用/答案之书",
+      "files": [
+        "资源/应用/答案之书/答案之书.zip"
+      ],
+      "images": [
+        "资源/应用/答案之书/IMG_5654.jpeg",
+        "资源/应用/答案之书/IMG_5657.jpeg"
+      ],
+      "description": "一个可以让伴侣知道你的答案并通知他的答案之书app",
+      "author": "天气晴",
+      "avatar": "资源/应用/答案之书/.avatar.png",
+      "ownerHash": "f3bfcffbc5ac19323fc3363b3b7bf12f9400bcf3a4ac77a64715effe25033679",
+      "updatedAt": "2026-09-17T12:20:39+08:00"
     },
     {
       "folder": "应用",

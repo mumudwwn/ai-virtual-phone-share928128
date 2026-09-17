@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-17T11:04:06.536Z",
+  "generatedAt": "2026-09-17T11:44:26.268Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -33,7 +33,7 @@
     },
     {
       "name": "应用",
-      "count": 107
+      "count": 108
     },
     {
       "name": "应用bug改善",
@@ -3544,6 +3544,29 @@
       "avatar": "资源/应用/景匣/.avatar.png",
       "ownerHash": "c84f1904fa7b68c212c91bc5fda2055472af121e6c8f64740a348e1eb138a112",
       "updatedAt": "2026-08-30T18:10:37+08:00"
+    },
+    {
+      "folder": "应用",
+      "name": "暖心小灶",
+      "dirName": "暖心小灶",
+      "type": "dir",
+      "path": "资源/应用/暖心小灶",
+      "files": [
+        "资源/应用/暖心小灶/暖心小灶.zip"
+      ],
+      "images": [
+        "资源/应用/暖心小灶/1000085544.jpg",
+        "资源/应用/暖心小灶/1000085551.jpg",
+        "资源/应用/暖心小灶/1000085553.jpg",
+        "资源/应用/暖心小灶/1000085555.jpg",
+        "资源/应用/暖心小灶/1000085557.jpg",
+        "资源/应用/暖心小灶/1000085561.jpg"
+      ],
+      "description": "和char一起在厨房做饭，可以单人/双人/多人。来体验厨房的温馨吧~",
+      "author": "Mercury（墨丘利）",
+      "avatar": "资源/应用/暖心小灶/.avatar.png",
+      "ownerHash": "1296c86a2df60f4785d5045f10d54089dd006909493e00eedd4570b73fd7d1c2",
+      "updatedAt": "2026-09-17T19:43:31+08:00"
     },
     {
       "folder": "应用",

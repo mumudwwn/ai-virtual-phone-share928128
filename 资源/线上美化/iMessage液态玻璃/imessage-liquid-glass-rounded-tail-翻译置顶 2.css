@@ -714,6 +714,55 @@ textarea {
   position: relative !important;
 }
 
+/* 双语气泡把玻璃层拆到内部，让翻译可以跨越后续气泡单独置顶 */
+.chat-bubble-role-user:has(.chat-bilingual-block),
+.chat-bubble-role-assistant:has(.chat-bilingual-block) {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.chat-bubble-role-user:has(.chat-bilingual-block)::before,
+.chat-bubble-role-assistant:has(.chat-bilingual-block)::before {
+  z-index: 0 !important;
+}
+
+.chat-bubble-role-user:has(.chat-bilingual-block) .chat-bilingual-block::before,
+.chat-bubble-role-assistant:has(.chat-bilingual-block) .chat-bilingual-block::before {
+  content: "";
+  position: absolute;
+  inset: -9px -15px;
+  border-radius: 20px;
+  pointer-events: none;
+  z-index: 0;
+  backdrop-filter: blur(20px) saturate(190%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+}
+
+.chat-bubble-role-user:has(.chat-bilingual-block) .chat-bilingual-block::before {
+  background: var(--bubble-user-bg);
+  border: 0.5px solid rgba(255, 255, 255, 0.35);
+  box-shadow:
+      inset 0.5px 0.5px 0.5px rgba(255, 255, 255, 0.35),
+      0 4px 16px rgba(0, 112, 235, 0.32);
+}
+
+.chat-bubble-role-assistant:has(.chat-bilingual-block) .chat-bilingual-block::before {
+  background: var(--bubble-char-bg);
+  border: 0.5px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+      inset 0.5px 0.5px 0.5px rgba(255, 255, 255, 0.22),
+      0 4px 14px rgba(0, 0, 0, 0.22);
+}
+
+.chat-bubble-role-user:has(.chat-bilingual-block) .chat-bilingual-block > .chat-bilingual-section:first-child,
+.chat-bubble-role-assistant:has(.chat-bilingual-block) .chat-bilingual-block > .chat-bilingual-section:first-child {
+  position: relative;
+  z-index: 1;
+}
+
 .chat-bilingual-divider {
   display: none !important;
 }
@@ -737,7 +786,7 @@ textarea {
   max-width: 300px !important;
   width: max-content !important;
   word-break: break-word !important;
-  z-index: 5 !important;
+  z-index: 9999 !important;
 }
 
 .chat-bilingual-section-translation,

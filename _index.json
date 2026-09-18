@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-18T17:01:24.988Z",
+  "generatedAt": "2026-09-18T17:07:10.437Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -85,7 +85,7 @@
     },
     {
       "name": "表情包",
-      "count": 8
+      "count": 9
     }
   ],
   "entries": [
@@ -6203,6 +6203,22 @@
       "avatar": "资源/表情包/nuko像素猫——来源于网络/.avatar.png",
       "ownerHash": "6282160018481cd1e72c1d048cde54f68f685dc043a3f0bb414518f03418a3cd",
       "updatedAt": "2026-08-31T20:56:48+08:00"
+    },
+    {
+      "folder": "表情包",
+      "name": "可爱联盟3D动态表情",
+      "dirName": "可爱联盟3D动态表情",
+      "type": "dir",
+      "path": "资源/表情包/可爱联盟3D动态表情",
+      "files": [
+        "资源/表情包/可爱联盟3D动态表情/可爱联盟3D动态（有预览）by云遇.docx"
+      ],
+      "images": [],
+      "description": "表情来源wx可爱联盟，侵权删\n表情名字随意二改",
+      "author": "云遇",
+      "avatar": "",
+      "ownerHash": "b4f8122c2c864ab59b9b44d3ac94bc675d36ed06adce337dbbaa28b94d488a99",
+      "updatedAt": "2026-09-19T01:06:18+08:00"
     },
     {
       "folder": "表情包",

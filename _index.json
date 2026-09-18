@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-18T06:52:47.784Z",
+  "generatedAt": "2026-09-18T08:38:07.545Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -13,7 +13,7 @@
     },
     {
       "name": "MCP",
-      "count": 1
+      "count": 2
     },
     {
       "name": "bug反馈专用，请先询问小坊，无法解决后再进行反馈，反馈最好有详细情境、附图，否则无法复现",
@@ -1071,6 +1071,22 @@
       "avatar": "资源/Js插件/面板按钮分页/.avatar.png",
       "ownerHash": "9255ec1277ace06ef7aebf6566a04ad2844f9b543a7b06e6b1b0b7fe619d781c",
       "updatedAt": "2026-08-24T09:39:40+08:00"
+    },
+    {
+      "folder": "MCP",
+      "name": "termux一键部署掌心窗教程",
+      "dirName": "termux一键部署掌心窗教程",
+      "type": "dir",
+      "path": "资源/MCP/termux一键部署掌心窗教程",
+      "files": [
+        "资源/MCP/termux一键部署掌心窗教程/掌心窗termux一键部署教程.docx"
+      ],
+      "images": [],
+      "description": "",
+      "author": "",
+      "avatar": "",
+      "ownerHash": "3967d5a76a764e87279d7c473db3bfd56975b7c9e64323f3cdfa9de1f773ddad",
+      "updatedAt": "2026-09-18T16:37:11+08:00"
     },
     {
       "folder": "MCP",

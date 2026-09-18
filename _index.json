@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-18T16:37:40.651Z",
+  "generatedAt": "2026-09-18T16:38:51.029Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -33,7 +33,7 @@
     },
     {
       "name": "应用",
-      "count": 115
+      "count": 114
     },
     {
       "name": "应用bug改善",
@@ -3171,20 +3171,6 @@
       "avatar": "资源/应用/回响/.avatar.png",
       "ownerHash": "c84f1904fa7b68c212c91bc5fda2055472af121e6c8f64740a348e1eb138a112",
       "updatedAt": "2026-09-02T06:56:22+08:00"
-    },
-    {
-      "folder": "应用",
-      "name": "团子共养日记",
-      "dirName": "团子共养日记",
-      "type": "dir",
-      "path": "资源/应用/团子共养日记",
-      "files": [],
-      "images": [],
-      "description": "🐰💌“团子共养日记”💗💕\n可以和char一起养个小动物，内置24个动物形象，可以更改主题颜色～也可以ai生成小动物。\n小宠物会自己写日记，也可以偷偷看char对它说什么悄悄话～\n有想加的功能欢迎找我～",
-      "author": "Fish.baby",
-      "avatar": "资源/应用/团子共养日记/.avatar.png",
-      "ownerHash": "fb962c4fceef95a258ac55e1fab9a3cb0bd1440197814a757957ec7d3234aa5e",
-      "updatedAt": "2026-09-19T00:30:35+08:00"
     },
     {
       "folder": "应用",

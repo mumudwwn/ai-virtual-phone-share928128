@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-18T17:10:12.788Z",
+  "generatedAt": "2026-09-18T17:10:56.123Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -6322,12 +6322,14 @@
       "files": [
         "资源/表情包/黄油小熊表情包/黄油小熊表情（有预览）by云遇.docx"
       ],
-      "images": [],
-      "description": "图源网络，随意二改",
+      "images": [
+        "资源/表情包/黄油小熊表情包/1000073440.jpg"
+      ],
+      "description": "图源网络，随意二改\n使用方法：下载-复制url-表情包仓储-导入",
       "author": "云遇",
       "avatar": "",
       "ownerHash": "b4f8122c2c864ab59b9b44d3ac94bc675d36ed06adce337dbbaa28b94d488a99",
-      "updatedAt": "2026-09-19T01:07:10+08:00"
+      "updatedAt": "2026-09-19T01:09:28+08:00"
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-18T06:32:14.224Z",
+  "generatedAt": "2026-09-18T06:49:25.414Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -85,7 +85,7 @@
     },
     {
       "name": "表情包",
-      "count": 7
+      "count": 8
     }
   ],
   "entries": [
@@ -6217,6 +6217,24 @@
       "avatar": "资源/表情包/萌（丑）猫合集/.avatar.png",
       "ownerHash": "b1fb6e5837d789bce23afa8d55d136b02a8653a05245d2980a3c323e300b1042",
       "updatedAt": "2026-09-04T13:37:46+08:00"
+    },
+    {
+      "folder": "表情包",
+      "name": "长草颜团子➕一点可爱兔猫表情包[小猫]",
+      "dirName": "长草颜团子➕一点可爱兔猫表情包[小猫]",
+      "type": "dir",
+      "path": "资源/表情包/长草颜团子➕一点可爱兔猫表情包[小猫]",
+      "files": [
+        "资源/表情包/长草颜团子➕一点可爱兔猫表情包[小猫]/长草颜团子➕一点可爱兔猫表情包.docx"
+      ],
+      "images": [
+        "资源/表情包/长草颜团子➕一点可爱兔猫表情包[小猫]/IMG_5273.jpeg"
+      ],
+      "description": "很久之前自己弄的表情包图链\n图源网络 侵权删",
+      "author": "歪歪",
+      "avatar": "资源/表情包/长草颜团子➕一点可爱兔猫表情包[小猫]/.avatar.png",
+      "ownerHash": "391b4032ffc7c6757f6b071510fb399931bfd9a2aa59075d4af604e53bf59036",
+      "updatedAt": "2026-09-18T14:48:29+08:00"
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-18T05:02:19.129Z",
+  "generatedAt": "2026-09-18T05:06:40.439Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -2127,9 +2127,7 @@
       "dirName": "Char动物园",
       "type": "dir",
       "path": "资源/应用/Char动物园",
-      "files": [
-        "资源/应用/Char动物园/charzoo-1.3.0.zip"
-      ],
+      "files": [],
       "images": [
         "资源/应用/Char动物园/1000120976.jpg",
         "资源/应用/Char动物园/1000120977.jpg",
@@ -2139,7 +2137,7 @@
       "author": "mist",
       "avatar": "资源/应用/Char动物园/.avatar.png",
       "ownerHash": "733a78d0648d5da548eef33a78f2d0cfa775f615ecdb238622b0197be3311f29",
-      "updatedAt": "2026-09-18T13:01:24+08:00"
+      "updatedAt": "2026-09-18T13:05:49+08:00"
     },
     {
       "folder": "应用",

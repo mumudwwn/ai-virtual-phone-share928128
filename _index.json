@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-19T15:54:34.652Z",
+  "generatedAt": "2026-09-19T16:01:13.927Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -4356,6 +4356,7 @@
       "type": "dir",
       "path": "资源/应用bug改善/将冒险改成跑团",
       "files": [
+        "资源/应用bug改善/将冒险改成跑团/README.html",
         "资源/应用bug改善/将冒险改成跑团/install.sh"
       ],
       "images": [],
@@ -4363,7 +4364,7 @@
       "author": "mist",
       "avatar": "资源/应用bug改善/将冒险改成跑团/.avatar.png",
       "ownerHash": "733a78d0648d5da548eef33a78f2d0cfa775f615ecdb238622b0197be3311f29",
-      "updatedAt": "2026-09-19T23:44:07+08:00"
+      "updatedAt": "2026-09-20T00:00:15+08:00"
     },
     {
       "folder": "应用bug改善",

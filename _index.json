@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-19T15:45:06.309Z",
+  "generatedAt": "2026-09-19T15:51:50.417Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -33,7 +33,7 @@
     },
     {
       "name": "应用",
-      "count": 116
+      "count": 115
     },
     {
       "name": "应用bug改善",
@@ -2988,25 +2988,6 @@
       "avatar": "",
       "ownerHash": "0ffce5bd289863ee9a5da25317d422cc3b3ebe42a4b3a0fa8e44b0b9443fc92b",
       "updatedAt": "2026-09-14T10:02:38+08:00"
-    },
-    {
-      "folder": "应用",
-      "name": "不要拉黑",
-      "dirName": "不要拉黑",
-      "type": "dir",
-      "path": "资源/应用/不要拉黑",
-      "files": [
-        "资源/应用/不要拉黑/bond.diary-3.1.0.zip"
-      ],
-      "images": [
-        "资源/应用/不要拉黑/1000036772.jpg",
-        "资源/应用/不要拉黑/1000036774.jpg"
-      ],
-      "description": "第一次拉黑\nta会原谅你\n第二次拉黑\nta会惩罚你\n第三次拉黑\n…或许ta会把你变成一道美餐\n(⚠️内含微恐跳脸元素)\n拉黑需谨慎～具体玩法见内置说明书\n还不是特别完善，如有bug去xhs搜同名跟我说一声😋",
-      "author": "碎瓀",
-      "avatar": "资源/应用/不要拉黑/.avatar.png",
-      "ownerHash": "bbb29644acf889478950632a8475ec71b84fdb1141f1c81ad7c7b51712fffef7",
-      "updatedAt": "2026-09-15T09:59:06+08:00"
     },
     {
       "folder": "应用",

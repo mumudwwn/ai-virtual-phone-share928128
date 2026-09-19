@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-19T03:02:41.284Z",
+  "generatedAt": "2026-09-19T05:56:25.038Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -77,7 +77,7 @@
     },
     {
       "name": "线上聊天状态栏",
-      "count": 15
+      "count": 16
     },
     {
       "name": "线下正则",
@@ -5962,6 +5962,25 @@
       "avatar": "资源/线上聊天状态栏/[蝴蝶结]黑白状态栏美化自取[小猫]/.avatar.png",
       "ownerHash": "72adb7d77211b0354bc8d30ad6f28de6e6ba7e1047ed9ec1c80c1ab683f98f11",
       "updatedAt": "2026-08-14T05:50:01+08:00"
+    },
+    {
+      "folder": "线上聊天状态栏",
+      "name": "【float线上状态栏】仿小红书by白咪饭",
+      "dirName": "【float线上状态栏】仿小红书by白咪饭",
+      "type": "dir",
+      "path": "资源/线上聊天状态栏/【float线上状态栏】仿小红书by白咪饭",
+      "files": [
+        "资源/线上聊天状态栏/【float线上状态栏】仿小红书by白咪饭/【float】仿小红书·夜间by白咪饭.json",
+        "资源/线上聊天状态栏/【float线上状态栏】仿小红书by白咪饭/【float】仿小红书·日间by白咪饭.json"
+      ],
+      "images": [
+        "资源/线上聊天状态栏/【float线上状态栏】仿小红书by白咪饭/IMG_3228.jpeg"
+      ],
+      "description": "换图换头像有bug都可以找小卷！\n因为大小问题仅展示了夜间样式，可以小红书298836913【咪咪饭】看见更完整预览，也可以QQ：1229967669私聊我许愿喜欢的状态栏、美化等",
+      "author": "白咪饭",
+      "avatar": "",
+      "ownerHash": "2df22f4332d991025ff8bdc44bfd1e60b11f54cdf952e93af836e1418b0ad7a1",
+      "updatedAt": "2026-09-19T13:55:27+08:00"
     },
     {
       "folder": "线上聊天状态栏",

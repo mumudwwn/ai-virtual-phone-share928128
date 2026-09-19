@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-19T09:00:22.457Z",
+  "generatedAt": "2026-09-19T10:30:04.756Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -9,7 +9,7 @@
     },
     {
       "name": "Js插件",
-      "count": 53
+      "count": 54
     },
     {
       "name": "MCP",
@@ -637,6 +637,22 @@
       "avatar": "",
       "ownerHash": "85b94dde3046f0bb789afce70959e309b5e83cbf12c2417685b16c4d9c3387c5",
       "updatedAt": "2026-09-14T19:46:06+08:00"
+    },
+    {
+      "folder": "Js插件",
+      "name": "时间流逝啦",
+      "dirName": "时间流逝啦",
+      "type": "dir",
+      "path": "资源/Js插件/时间流逝啦",
+      "files": [
+        "资源/Js插件/时间流逝啦/message-time-delta.js"
+      ],
+      "images": [],
+      "description": "大概作用：让char知道，事情不会瞬间完成，以及消息之间过去了多久。\n\n\n解决的问题：\n即使加了现实时间感知，给ai发送了时间戳，ai还是会因为懒惰性不去算时间过去了多久，所以做了这个插件，直接帮助ai计算，曲线救国。",
+      "author": "koi",
+      "avatar": "资源/Js插件/时间流逝啦/.avatar.png",
+      "ownerHash": "168992d163bb3fcaf4ae9bdda07ebcba4591c3533f28260f0bf1dba76ae93ccc",
+      "updatedAt": "2026-09-19T18:29:07+08:00"
     },
     {
       "folder": "Js插件",

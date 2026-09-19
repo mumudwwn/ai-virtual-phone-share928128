@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-19T07:18:05.722Z",
+  "generatedAt": "2026-09-19T09:00:22.457Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -73,7 +73,7 @@
     },
     {
       "name": "线上美化",
-      "count": 43
+      "count": 44
     },
     {
       "name": "线上聊天状态栏",
@@ -5703,6 +5703,26 @@
       "avatar": "资源/线上美化/简单的美化2/.avatar.png",
       "ownerHash": "cfd675f4e26db2ac2b01670f28453eb921057607ab8a303dc97fd7dd401bc94b",
       "updatedAt": "2026-09-15T14:57:14+08:00"
+    },
+    {
+      "folder": "线上美化",
+      "name": "简白 by koi",
+      "dirName": "简白 by koi",
+      "type": "dir",
+      "path": "资源/线上美化/简白 by koi",
+      "files": [
+        "资源/线上美化/简白 by koi/简白主题.css",
+        "资源/线上美化/简白 by koi/简白主题配套插件.js"
+      ],
+      "images": [
+        "资源/线上美化/简白 by koi/ScreenShot_2026-09-19_165326_063.png",
+        "资源/线上美化/简白 by koi/ScreenShot_2026-09-19_165358_490.png"
+      ],
+      "description": "简白 by koi。\n1、导入说明：将第一个文件导入为聊天室css，第二个文件导入为插件。必须配套使用。\n2、主要改动说明：\n  1）单击char头像展开内心活动卡片。\n  2）隐藏小黄豆表情包按钮和发送按钮，需要开启回车发送。\n  3）线下模式移动到+号展开的菜单栏中。\n  4）做了单聊和群聊适配。\n3、二改自用随意。\n4、二改二传除不得上传资源集市，其它标原后随意。\n5、如需联系我：（小红书）Alkaid0104\n\n\n素材说明：\n1、花体字体：Allura Regular；字体来源：Google Fonts；授权协议：SIL 开放字体许可证 1.1；授权说明：允许个人及商业使用、嵌入与再发布，不得单独售卖字体文件。\n2、文字描述图片素材来源：小红书作者「像素猫猫」（小红书号：hcxl610715f）；授权标注：粉免商。\n3、内心活动默认图片素材来源：小红书作者「温如初」（小红书号：2139942714）；授权标注：可商。\n\n\n部分预览图片：",
+      "author": "koi",
+      "avatar": "资源/线上美化/简白 by koi/.avatar.png",
+      "ownerHash": "168992d163bb3fcaf4ae9bdda07ebcba4591c3533f28260f0bf1dba76ae93ccc",
+      "updatedAt": "2026-09-19T16:59:22+08:00"
     },
     {
       "folder": "线上美化",

@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-19T14:53:34.118Z",
+  "generatedAt": "2026-09-19T15:07:45.620Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -9,7 +9,7 @@
     },
     {
       "name": "Js插件",
-      "count": 54
+      "count": 53
     },
     {
       "name": "MCP",
@@ -348,22 +348,6 @@
       "avatar": "",
       "ownerHash": "a3e8f7a81a5fac289e40f96621b11901cd1b62d50ef20b209b428c924341ca8a",
       "updatedAt": "2026-09-17T12:05:33+08:00"
-    },
-    {
-      "folder": "Js插件",
-      "name": "发送表情后清空输入框文字[爱心]",
-      "dirName": "发送表情后清空输入框文字[爱心]",
-      "type": "dir",
-      "path": "资源/Js插件/发送表情后清空输入框文字[爱心]",
-      "files": [
-        "资源/Js插件/发送表情后清空输入框文字[爱心]/presets.js"
-      ],
-      "images": [],
-      "description": "一个简单的发送表情后自动清空输入框文字的插件",
-      "author": "就真实可靠的野史记载吕布的子宫是他的暗器",
-      "avatar": "资源/Js插件/发送表情后清空输入框文字[爱心]/.avatar.png",
-      "ownerHash": "64c4b53d46f5e3372d7b9038e518cf7a93df9d8da983094a12c2ab652f65ac8b",
-      "updatedAt": "2026-08-23T13:24:05+08:00"
     },
     {
       "folder": "Js插件",

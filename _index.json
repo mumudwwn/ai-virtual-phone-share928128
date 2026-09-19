@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-19T15:24:39.081Z",
+  "generatedAt": "2026-09-19T15:27:16.148Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -2374,6 +2374,13 @@
         "资源/应用/Tripie/Tripie.1.1.zip"
       ],
       "images": [
+        "资源/应用/Tripie/1000058556.jpg",
+        "资源/应用/Tripie/1000058558.jpg",
+        "资源/应用/Tripie/1000058559.jpg",
+        "资源/应用/Tripie/1000058560.jpg",
+        "资源/应用/Tripie/1000058561.jpg",
+        "资源/应用/Tripie/1000058568.jpg",
+        "资源/应用/Tripie/1000058569.jpg",
         "资源/应用/Tripie/Camera_XHS_1789829187136notes_pre_post_1040g3k83259vpset.jpg",
         "资源/应用/Tripie/Camera_XHS_1789829192281notes_pre_post_1040g3k03259vps6m.jpg",
         "资源/应用/Tripie/Camera_XHS_1789829196037notes_pre_post_1040g3k03259vps1s.jpg",
@@ -2385,7 +2392,7 @@
       "author": "今天备份数据了吗",
       "avatar": "资源/应用/Tripie/.avatar.png",
       "ownerHash": "e980d0a04ef4ce6decd5698ccef390b628dae344225e3a0678b9fbfed09aa659",
-      "updatedAt": "2026-09-19T23:23:38+08:00"
+      "updatedAt": "2026-09-19T23:26:01+08:00"
     },
     {
       "folder": "应用",

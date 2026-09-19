@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>冒险模式 CoC 化改造包 · 说明</title>
+    <style>
+        /* 保持干净可读，接近 md 渲染风格 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f6f8fa;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            padding: 2rem 1rem;
+        }
+
+        .markdown-body {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 2.5rem 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+            border: 1px solid #d0d7de;
+        }
+
+        /* 标题风格 */
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            padding-bottom: 0.3rem;
+            border-bottom: 1px solid #d0d7de;
+            margin-top: 0;
+            margin-bottom: 1.2rem;
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.2rem;
+            border-bottom: 1px solid #e1e4e8;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        /* 表格 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.2rem 0;
+            font-size: 0.95rem;
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 640px) {
+            table {
+                display: table;
+                white-space: normal;
+            }
+        }
+
+        th,
+        td {
+            border: 1px solid #d0d7de;
+            padding: 0.6rem 1rem;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #f6f8fa;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+
+        /* 列表 */
+        ul,
+        ol {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin-bottom: 0.3rem;
+        }
+
+        /* 代码/路径 */
+        code {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.9em;
+            background-color: #f0f2f5;
+            padding: 0.2em 0.4em;
+            border-radius: 6px;
+            color: #1f2328;
+        }
+
+        pre {
+            background-color: #f6f8fa;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 1px solid #d0d7de;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        /* 强调 */
+        strong {
+            font-weight: 600;
+        }
+
+        /* 链接 */
+        a {
+            color: #0969da;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* 引用块/注意事项 */
+        blockquote {
+            border-left: 4px solid #d0d7de;
+            padding-left: 1rem;
+            color: #57606a;
+            margin: 1rem 0;
+            background-color: #f9fafb;
+            padding: 0.8rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* 小图标点缀 */
+        .emoji {
+            font-style: normal;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #e1e4e8;
+            margin: 2rem 0;
+        }
+
+        /* 内联徽章 */
+        .badge {
+            background: #eaeef2;
+            border-radius: 20px;
+            padding: 0.1rem 0.6rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #3a3f46;
+            display: inline-block;
+            margin-right: 0.3rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="markdown-body">
+        <h1>冒险模式 CoC 化改造包（fork mod）</h1>
+        <p>把 AI 虚拟手机的「冒险模式（地图跑团）」升级为完整 CoC（克苏鲁的呼唤）跑团工具。共改 9 个文件（6 个覆盖 + 3 个新增），无新依赖、无环境变量要求。</p>
+
+        <h2>改了什么</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>文件</th>
+                    <th>内容</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>lib/coc-sheet.ts</code></td>
+                    <td>CoC 6/7 版角色卡：15 职业、46 技能基础值×两版、奖励/惩罚骰、幸运补值、攻击 vs 闪避、疯狂判定</td>
+                </tr>
+                <tr>
+                    <td><code>lib/map-types.ts</code></td>
+                    <td>全部类型定义（规则版本/秘密/分幕/演出资源/模组内人设等）</td>
+                </tr>
+                <tr>
+                    <td><code>lib/map-storage.ts</code></td>
+                    <td>存档层：6/7 版属性掷法与 HP 公式、秘密分发、人设写入</td>
+                </tr>
+                <tr>
+                    <td><code>lib/map-rpg-engine.ts</code></td>
+                    <td>KP 引擎：桌面流程提示词、叙述过程强规则、时段氛围、秘密团机制、私聊幕、分幕真相注入、CG/BGM 报幕协议</td>
+                </tr>
+                <tr>
+                    <td><code>lib/module-core.ts</code></td>
+                    <td>【新增】大模组分栏提取管道 + 纯代码世界组装</td>
+                </tr>
+                <tr>
+                    <td><code>lib/stage-assets.ts</code></td>
+                    <td>【新增】立绘/CG/BGM 本地存储（图片不进 AI）</td>
+                </tr>
+                <tr>
+                    <td><code>lib/investigator-import.ts</code></td>
+                    <td>【新增】调查员时代化导入（现代角色卡→模组时代人设）</td>
+                </tr>
+                <tr>
+                    <td><code>components/map/map-lobby.tsx</code></td>
+                    <td>大厅：规则版本选择、分栏导入+提取+审校、核心包导出导入、KP 风格</td>
+                </tr>
+                <tr>
+                    <td><code>components/map/map-view.tsx</code></td>
+                    <td>游戏界面：自宣言自检定、战斗轮、线索板、秘密卡、🔒私聊、CG/BGM 播放、幕后全貌、人设审校</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>安装（两种方式）</h2>
+        <p><strong>方式一：脚本安装（推荐）</strong></p>
+        <ol>
+            <li>部署好官方项目（或用你已有的部署仓库）</li>
+            <li>把 <code>install.sh</code> 放到项目根目录，执行 <code>sh install.sh</code>（Windows 在 Git Bash/WSL 里跑）</li>
+            <li>脚本会从改造者的公开仓库拉取 9 个文件到对应路径</li>
+            <li>提交并部署（Netlify/Vercel 均可）</li>
+        </ol>
+        <p><strong>方式二：手动下载</strong></p>
+        <p>从 <a href="https://github.com/suniorashli/momo.float.phone/tree/main" target="_blank" rel="noopener">https://github.com/suniorashli/momo.float.phone/tree/main</a> 按上表路径逐个下载 9 个文件（Raw 按钮），放到官方项目同路径覆盖/新增，然后提交部署。</p>
+
+        <h2>部署后必做</h2>
+        <p>进入「冒险 → 冒险设置」，把「<strong>场景生成</strong>」「<strong>裁决</strong>」「<strong>世界生成</strong>」三个提示词各点一次「重置当前提示词」——改造大量修改了默认提示词，不重置的话旧自定义内容会盖住新功能。</p>
+
+        <h2>玩法速览</h2>
+        <ul>
+            <li><strong>建团</strong>：世界描述 或 分栏导入模组（NPC/真相/流程三栏 txt，大模组自动分块提取）→ 审校 → 可导出「核心包」复用/分享 → 选 6/7 版规则 → 选同伴</li>
+            <li><strong>入团</strong>：你和每位同伴都自动生成「模组内身份」（现代职业→时代职业：警察→巡捕、主播→记者），你的会弹窗让你过目修改</li>
+            <li><strong>跑团</strong>：KP 只报信息+💡暗示胶囊；你自己宣言、自己掷骰（7 版有奖励/惩罚骰三键、幸运补值）；战斗用先攻面板；线索自动归档线索板；每 4 轮推进时段</li>
+            <li><strong>秘密团</strong>：人手一份秘密（你的在状态页🤫）；🔒 可与 NPC 私下交谈；同伴的私聊你结局前看不到——通关后点 🎭 看幕后全貌</li>
+            <li><strong>演出</strong>：顶栏「演出资源」上传立绘（文件名=NPC名 自动绑定）/CG（cg_ 前缀）/BGM（bgm_ 前缀）；KP 报幕自动触发全屏 CG 与换曲，也可手动「试演」</li>
+        </ul>
+
+        <p>旧世界/旧存档默认按 6 版规则兼容运行，无需迁移。</p>
+
+        <p>祝理智长存。🎲</p>
+
+        <hr>
+        <p style="font-size: 0.85rem; color: #57606a; text-align: center; margin-top: 1.5rem;">原始 README.md 转换 · 格式适配网页阅读</p>
+    </div>
+</body>
+</html>

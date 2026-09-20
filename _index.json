@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-20T15:50:20.033Z",
+  "generatedAt": "2026-09-20T15:51:24.070Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -3145,7 +3145,7 @@
     },
     {
       "folder": "应用",
-      "name": "互动日记 v2.1.0",
+      "name": "互动日记 （9.20更新）",
       "dirName": "互动日记 v2.1.0",
       "type": "dir",
       "path": "资源/应用/互动日记 v2.1.0",
@@ -3161,7 +3161,7 @@
       "author": "豆瑞米吉",
       "avatar": "资源/应用/互动日记 v2.1.0/.avatar.png",
       "ownerHash": "1f4ce1e97032d0c95ecbaf16d8ff0332fd1e2b5e4424b4cd66cc94e0c2fb08b6",
-      "updatedAt": "2026-09-20T23:37:15+08:00"
+      "updatedAt": "2026-09-20T23:50:28+08:00"
     },
     {
       "folder": "应用",

@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-20T06:35:31.292Z",
+  "generatedAt": "2026-09-20T06:49:41.130Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -3017,8 +3017,7 @@
       "type": "dir",
       "path": "资源/应用/不要拉黑(微恐向)",
       "files": [
-        "资源/应用/不要拉黑(微恐向)/bond.diary-3.1.0.zip",
-        "资源/应用/不要拉黑(微恐向)/不要拉黑9.16.zip"
+        "资源/应用/不要拉黑(微恐向)/bond.diary-3.1.0.zip"
       ],
       "images": [
         "资源/应用/不要拉黑(微恐向)/IMG_20260915_100103.jpg"
@@ -3027,7 +3026,7 @@
       "author": "碎瓀",
       "avatar": "资源/应用/不要拉黑(微恐向)/.avatar.png",
       "ownerHash": "bbb29644acf889478950632a8475ec71b84fdb1141f1c81ad7c7b51712fffef7",
-      "updatedAt": "2026-09-19T23:53:33+08:00"
+      "updatedAt": "2026-09-20T14:48:44+08:00"
     },
     {
       "folder": "应用",

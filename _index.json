@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-20T15:58:51.435Z",
+  "generatedAt": "2026-09-20T16:07:17.907Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -33,7 +33,7 @@
     },
     {
       "name": "应用",
-      "count": 120
+      "count": 119
     },
     {
       "name": "应用bug改善",
@@ -2270,22 +2270,6 @@
       "avatar": "资源/应用/Lomoii/.avatar.png",
       "ownerHash": "bfb3e3d17651836721132248bd5c9b911d883b93bb4269afe371127e1e530ed6",
       "updatedAt": "2026-09-06T15:07:53+08:00"
-    },
-    {
-      "folder": "应用",
-      "name": "Love/仿日乙",
-      "dirName": "Love仿日乙",
-      "type": "dir",
-      "path": "资源/应用/Love仿日乙",
-      "files": [
-        "资源/应用/Love仿日乙/Love.zip"
-      ],
-      "images": [],
-      "description": "Love/仿日乙游戏模式\n目前功能：开始游戏（前三章共通线，后面是单char的分线）\n主线剧情（全程都包含所有char）\n读取游戏（读档）\n后日谈（结局番外，可以以html卡片的形式发给聊天内char）\n收藏馆（目前没什么用，因为cg音乐等等其实都是要user自行在设置里上传）\n设置内：\n●可更换主页背景背景音乐\n●上传剧情内cg，立绘，背景，音乐等等\n●查看语音和文字api调用记录\n●ai生成新的世界观/人设（基于新的世界观和人设进行扮演）\n●系统预设（可更改）\n●可塞世界书（不要塞太多，不然模型会变蠢）\n●剧情生成不了的话，请关闭nsfw按钮",
-      "author": "倚枫歌",
-      "avatar": "",
-      "ownerHash": "0ffce5bd289863ee9a5da25317d422cc3b3ebe42a4b3a0fa8e44b0b9443fc92b",
-      "updatedAt": "2026-09-20T21:25:55+08:00"
     },
     {
       "folder": "应用",

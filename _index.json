@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-20T15:31:58.268Z",
+  "generatedAt": "2026-09-20T15:38:21.742Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -33,7 +33,7 @@
     },
     {
       "name": "应用",
-      "count": 117
+      "count": 118
     },
     {
       "name": "应用bug改善",
@@ -3142,6 +3142,26 @@
       "avatar": "资源/应用/互动日记/.avatar.png",
       "ownerHash": "1f4ce1e97032d0c95ecbaf16d8ff0332fd1e2b5e4424b4cd66cc94e0c2fb08b6",
       "updatedAt": "2026-09-19T04:02:12+08:00"
+    },
+    {
+      "folder": "应用",
+      "name": "互动日记 v2.1.0",
+      "dirName": "互动日记 v2.1.0",
+      "type": "dir",
+      "path": "资源/应用/互动日记 v2.1.0",
+      "files": [
+        "资源/应用/互动日记 v2.1.0/diary.doris-2.1.0.zip"
+      ],
+      "images": [
+        "资源/应用/互动日记 v2.1.0/54421.jpg",
+        "资源/应用/互动日记 v2.1.0/54427.jpg",
+        "资源/应用/互动日记 v2.1.0/54444.jpg"
+      ],
+      "description": "让char回答你的问题解锁日记，答错可以让他完成指定任务解锁。解锁后char会阅读你的日记并圈画批注，还会吐槽其他char的批注。\n【9.20更新】\n🔆 AI 今日复盘总结\n🔆 AI 一键代写润色\n🔆 新增检索和筛选功能\n🔆 数据统计可视化\n🔐修复批注「找不到原句」问题\n🔐修复重复吐槽问题\n🔐修复通过申请后看不到原来申请理由和任务问题",
+      "author": "豆瑞米吉",
+      "avatar": "资源/应用/互动日记 v2.1.0/.avatar.png",
+      "ownerHash": "1f4ce1e97032d0c95ecbaf16d8ff0332fd1e2b5e4424b4cd66cc94e0c2fb08b6",
+      "updatedAt": "2026-09-20T23:37:15+08:00"
     },
     {
       "folder": "应用",

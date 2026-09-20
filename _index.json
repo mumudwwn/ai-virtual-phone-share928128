@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-20T06:16:00.031Z",
+  "generatedAt": "2026-09-20T06:19:23.122Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -2609,7 +2609,7 @@
     },
     {
       "folder": "应用",
-      "name": "[月亮]听书（9.20 v1.0）",
+      "name": "[月亮]声阅(听书) v1.0",
       "dirName": "[星星]听书",
       "type": "dir",
       "path": "资源/应用/[星星]听书",
@@ -2623,7 +2623,7 @@
       "author": "那一天",
       "avatar": "资源/应用/[星星]听书/.avatar.png",
       "ownerHash": "2233a90444598bea29bf22080ecbb781b6ee3b9a382b190a4154d678f27c2b2a",
-      "updatedAt": "2026-09-20T14:15:03+08:00"
+      "updatedAt": "2026-09-20T14:18:22+08:00"
     },
     {
       "folder": "应用",

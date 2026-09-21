@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-21T08:43:29.885Z",
+  "generatedAt": "2026-09-21T10:39:12.456Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -41,7 +41,7 @@
     },
     {
       "name": "应用反馈（与应用作者沟通渠道）",
-      "count": 3
+      "count": 4
     },
     {
       "name": "快捷指令模版",
@@ -4629,6 +4629,20 @@
       "avatar": "资源/应用反馈（与应用作者沟通渠道）/[星星]许愿一个记忆库插件/.avatar.png",
       "ownerHash": "2233a90444598bea29bf22080ecbb781b6ee3b9a382b190a4154d678f27c2b2a",
       "updatedAt": "2026-09-20T14:21:24+08:00"
+    },
+    {
+      "folder": "应用反馈（与应用作者沟通渠道）",
+      "name": "公共储物架和壹集市里壹集市无法切换",
+      "dirName": "公共储物架和壹集市里壹集市无法切换",
+      "type": "dir",
+      "path": "资源/应用反馈（与应用作者沟通渠道）/公共储物架和壹集市里壹集市无法切换",
+      "files": [],
+      "images": [],
+      "description": "老师老师，集市上的版本导入后，壹集市无法正常切换😭，真的很喜欢老师的应用",
+      "author": "",
+      "avatar": "",
+      "ownerHash": "b32246b26f03c91edd579c26cfef21927824a0cfbc453ec3277e4ced15645125",
+      "updatedAt": "2026-09-21T18:38:08+08:00"
     },
     {
       "folder": "快捷指令模版",

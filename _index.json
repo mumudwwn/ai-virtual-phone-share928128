@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-21T16:28:00.969Z",
+  "generatedAt": "2026-09-21T16:31:27.217Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -9,7 +9,7 @@
     },
     {
       "name": "Js插件",
-      "count": 54
+      "count": 55
     },
     {
       "name": "MCP",
@@ -349,6 +349,27 @@
       "avatar": "",
       "ownerHash": "a3e8f7a81a5fac289e40f96621b11901cd1b62d50ef20b209b428c924341ca8a",
       "updatedAt": "2026-09-17T12:05:33+08:00"
+    },
+    {
+      "folder": "Js插件",
+      "name": "古早telegram复古蓝♡主页聊天室朋友圈美化插件v10",
+      "dirName": "古早telegram复古蓝♡主页聊天室朋友圈美化插件v10",
+      "type": "dir",
+      "path": "资源/Js插件/古早telegram复古蓝♡主页聊天室朋友圈美化插件v10",
+      "files": [
+        "资源/Js插件/古早telegram复古蓝♡主页聊天室朋友圈美化插件v10/古早Instagram复古蓝v10对应插件.js"
+      ],
+      "images": [
+        "资源/Js插件/古早telegram复古蓝♡主页聊天室朋友圈美化插件v10/IMG_1029大.jpeg",
+        "资源/Js插件/古早telegram复古蓝♡主页聊天室朋友圈美化插件v10/IMG_1030大.jpeg",
+        "资源/Js插件/古早telegram复古蓝♡主页聊天室朋友圈美化插件v10/IMG_1031大.jpeg",
+        "资源/Js插件/古早telegram复古蓝♡主页聊天室朋友圈美化插件v10/IMG_1066大.jpeg"
+      ],
+      "description": "[粗][粉][大]这是复古蓝的插件，不是灰色的，不要看错了[/大][/粉][/粗]\n[粗][粉][大]\n[/大][/粉][/粗]\n[粗][紫][大]美化去主页美化区下载，要配套使用[/大][/紫][/粗]\n[粗][紫][大]\n[/大][/紫][/粗]\n[粗][灰][小]小饭桌1107924487[/小][/灰][/粗]",
+      "author": "仓鼠",
+      "avatar": "资源/Js插件/古早telegram复古蓝♡主页聊天室朋友圈美化插件v10/.avatar.png",
+      "ownerHash": "9840628ff5f4d01a8a3aad435eade27791b624164c9cb2815513a424987ac5f7",
+      "updatedAt": "2026-09-22T00:30:21+08:00"
     },
     {
       "folder": "Js插件",

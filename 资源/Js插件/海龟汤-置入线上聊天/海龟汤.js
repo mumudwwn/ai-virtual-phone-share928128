@@ -3,7 +3,7 @@ export default {
     id: "turtle-soup",
     name: "海龟汤",
     apiVersion: 1,
-    version: "2.0.7",
+    version: "2.0.8",
     author: "koi",
     description: "在单聊或群聊中由角色主持海龟汤，并用题目卡片和汤底卡片展示一轮游戏。",
     permissions: ["chat.read", "chat.write", "ui", "storage"],
@@ -111,8 +111,8 @@ export default {
     }
 
     function isClearlySolved(text) {
-      if (/(不完全正确|还没答对|没有猜对|不是正解|정답이\s*아니|아직.{0,8}정답|not\s+(?:quite\s+)?correct)/i.test(text)) return false;
-      return /(完全正确|完全答对|答对了|猜对了|正解|정답입니다|정답이에요|정답이야|맞혔|맞췄|exactly\s+right|correct\s+answer)/i.test(text);
+      if (/(不(?:算|是)?完全正确|还没答对|没有猜对|不是正解|部分正确|部分答对|只答对|答对了.{0,8}(?:一部分|一点|方向)|接近(?:答案|真相|汤底)|继续(?:提问|问)|还差|尚未.{0,8}(?:答对|猜出|还原)|정답이\s*아니|아직.{0,8}정답|정답에\s*가까|not\s+(?:quite\s+|fully\s+)?correct|partly\s+correct|keep\s+(?:asking|guessing))/i.test(text)) return false;
+      return /(完全正确|完全答对|全部答对|完整(?:猜出|还原)(?:了)?(?:真相|汤底)|恭喜.{0,12}(?:答对|猜对|破案)|(?:这|那|这就|那就)是(?:完整的)?(?:正解|正确答案)|정답입니다|정답이에요|정답이야|완전히\s*(?:맞|정답)|exactly\s+right|fully\s+correct|correct\s+answer)/i.test(text);
     }
 
     function extractPuzzle(text) {
@@ -436,9 +436,7 @@ ${game.restoredAfterDelete ? "汤底卡片已被删除，本轮已回退到揭�
       const game = readGames()[payload.sessionId];
       if (!game || game.status === "ended") return payload;
       const reveal = stripRevealTags(generated?.text ?? payload.text);
-      if (reveal.found || isClearlySolved(reveal.text)) {
-        queueReveal(payload.sessionId, reveal.reason || "solved");
-      }
+      if (isClearlySolved(reveal.text)) queueReveal(payload.sessionId, "solved");
       payload.text = reveal.text;
       return payload;
     });

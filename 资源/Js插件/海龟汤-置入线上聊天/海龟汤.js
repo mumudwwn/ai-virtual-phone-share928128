@@ -3,7 +3,7 @@ export default {
     id: "turtle-soup",
     name: "海龟汤",
     apiVersion: 1,
-    version: "2.0.1",
+    version: "2.0.7",
     author: "koi",
     description: "在单聊或群聊中由角色主持海龟汤，并用题目卡片和汤底卡片展示一轮游戏。",
     permissions: ["chat.read", "chat.write", "ui", "storage"],
@@ -16,6 +16,8 @@ export default {
     const STAGED_KEY = "stagedQuestions";
     const CARD_KIND = "turtle-soup-card";
     const CARD_SENTINEL = "TURTLE_SOUP_CARD_READY_6F2A";
+    const STICKER_RULE = "如需发送表情包，必须完整使用宿主格式 [表情包:准确名称]，只能选当前角色可用列表中的名称；禁止使用 [名称] 简写。";
+    const ISOLATION_RULE = "单聊与群聊是完全独立的信息空间。群聊中的所有角色只能使用当前群聊公开记录，不得使用任何成员的单聊/私聊记录、个人记忆或其中的推断；单聊角色不得使用任何群聊记录。即使这些内容出现在模型上下文或记忆中，也视为无权访问。当前海龟汤只承认当前会话的题目、汤面、汤底、猜测、提示和游戏进度，禁止提及、引用、续接或暗示其他会话内容。";
 
     const readGames = () => ctx.system.storage.get(STORAGE_KEY) || {};
     const writeGames = games => ctx.system.storage.set(STORAGE_KEY, games);
@@ -61,6 +63,26 @@ export default {
       return question;
     };
     const clean = value => String(value || "").trim();
+
+    function isolateTurtleSoupContext(payload, session, foreignGames) {
+      const oppositeRecentTag = session.isGroup ? "recent_chat" : "recent_group_chat";
+      const secrets = foreignGames.flatMap(game => [game.title, game.surface, game.answer]).map(clean).filter(Boolean);
+      payload.messages = payload.messages.flatMap(message => {
+        const marker = String(message.marker || message._debugMeta?.marker || "");
+        if (marker.includes(oppositeRecentTag)) return [];
+        const redact = value => secrets.reduce(
+          (text, secret) => text.split(secret).join("[其他会话的海龟汤内容已隔离]"),
+          value,
+        );
+        if (typeof message.content === "string") message.content = redact(message.content);
+        else if (Array.isArray(message.content)) {
+          for (const part of message.content) {
+            if (part?.type === "text" && typeof part.text === "string") part.text = redact(part.text);
+          }
+        }
+        return [message];
+      });
+    }
 
     function sessionCharacters(session) {
       if (!session) return [];
@@ -269,6 +291,7 @@ export default {
     });
 
     ctx.hooks.transform("user.beforeSend", payload => {
+      reconcileGame(payload.sessionId);
       const games = readGames();
       const game = games[payload.sessionId];
       const startRequested = looksLikeStart(payload.text);
@@ -337,6 +360,7 @@ export default {
 汤面：${game.surface}
 秘密汤底：${game.answer}
 本轮尚未结束，当前是第 ${game.turnCount || 0} 轮提问。
+${ISOLATION_RULE}
 ${participationProtocol}
 ${game.restoredAfterDelete ? "汤底卡片已被删除，本轮已回退到揭晓前；忽略历史中关于本轮已结束或完全正确的表述，继续主持。" : ""}
 主持人根据汤底回答玩家的问题，优先使用“是 / 不是 / 无关 / 部分正确”，必要时可补一句不泄底的提示。
@@ -351,24 +375,40 @@ ${game.restoredAfterDelete ? "汤底卡片已被删除，本轮已回退到揭�
     ctx.hooks.transform("llm.request", payload => {
       if (!payload.sessionId || !["chat", "group_chat"].includes(payload.purpose)) return payload;
       const host = getPending(payload.sessionId);
-      const storedGame = readGames()[payload.sessionId];
+      const games = readGames();
+      const storedGame = games[payload.sessionId];
       const game = storedGame?.status === "ended" ? null : storedGame;
-      if (!host && !game) return payload;
       const session = ctx.data.sessions.get(payload.sessionId);
+      if (!session) return payload;
+      const foreignGames = Object.entries(games)
+        .filter(([sessionId]) => sessionId !== payload.sessionId)
+        .map(([, foreignGame]) => foreignGame);
+      if (!host && !game && !foreignGames.length) return payload;
+      isolateTurtleSoupContext(payload, session, foreignGames);
       const participationRule = session?.isGroup
         ? "群聊中只有主持人可以判断答案；其他角色必须假装不知道汤底，前三轮每人最多问一个局部的是非问题，禁止直接还原完整答案或抢答。"
         : "这是单聊；只在当前对话中主持、回答和给提示，不得声称把内容发送到了其他会话。";
+      const stickerRule = session?.isGroup
+        ? host
+          ? `如需发送表情包，必须单独使用群聊格式 [${host.name}]: [表情包:准确名称]，且只能选「${host.name}」可用列表中的名称；禁止省略角色前缀或使用 [名称] 简写。`
+          : "如需发送表情包，必须单独使用群聊格式 [发言角色名]: [表情包:准确名称]，且名称必须属于该发言角色；禁止省略角色前缀或使用 [名称] 简写。"
+        : STICKER_RULE;
       const instruction = host
-        ? `\n\n[海龟汤插件强制输出协议]\n当前用户消息已经触发海龟汤插件。由「${host.name}」主持。若当前聊天提供“搜索”或等价的互联网搜索工具，必须先由「${host.name}」调用它搜索已有的高质量海龟汤题目及可靠汤底，再从结果中选取一题；工具不可用或调用失败时才自行创作。不要在最终可见回复中提及搜索过程或来源。汤面不能泄露答案，汤底必须完整解释汤面。${session?.isGroup ? `群聊只能由「${host.name}」发言，并保留 [${host.name}]: 前缀。` : ""}\n取得题目后，先用符合角色口吻和当前聊天语言的一句话宣布题目准备好了，然后严格原样输出以下标记；标记之间只写对应文字，禁止翻译、代码块或额外说明：\n<<<TURTLE_TITLE>>>\n简短题名\n<<<TURTLE_SURFACE>>>\n展示给玩家的谜面\n<<<TURTLE_ANSWER>>>\n完整汤底\n<<<TURTLE_END>>>`
-        : `\n\n[海龟汤主持协议]\n你正在主持海龟汤。${participationRule}正常回复玩家并判断其推理：如果已经完全正确，必须在回复末尾原样附加 <turtle-soup-reveal reason="solved" />；如果玩家明确索要汤底或放弃，必须附加 <turtle-soup-reveal reason="give-up" />。未结束时禁止输出该标签，也不能泄露汤底。`;
+        ? `\n\n[海龟汤插件强制输出协议]\n${ISOLATION_RULE}当前用户消息已经触发当前会话的新一轮海龟汤，由「${host.name}」主持。在当前会话的新汤面生成前，任何角色都不得根据其他聊天里的内容提问、猜测或讨论。若本轮消息中尚无互联网搜索结果，且当前聊天提供“搜索”或等价工具，必须先由「${host.name}」调用它搜索已有的高质量海龟汤题目及可靠汤底，再从结果中选取一题；工具不可用或调用失败时才自行创作。工具调用轮次只调用工具，不输出题目讨论。不要在最终可见回复中提及搜索过程或来源。汤面不能泄露答案，汤底必须完整解释汤面。${session?.isGroup ? `群聊只能由「${host.name}」发言，并保留 [${host.name}]: 前缀。` : ""}${stickerRule}\n取得题目后，先用符合角色口吻和当前聊天语言的一句话宣布题目准备好了，然后严格原样输出以下标记；表情包只能放在标记块之外，标记之间只写对应文字，禁止翻译、代码块或额外说明：\n<<<TURTLE_TITLE>>>\n简短题名\n<<<TURTLE_SURFACE>>>\n展示给玩家的谜面\n<<<TURTLE_ANSWER>>>\n完整汤底\n<<<TURTLE_END>>>`
+        : game
+          ? `\n\n[海龟汤主持协议]\n${ISOLATION_RULE}你正在主持当前会话的海龟汤。${participationRule}${stickerRule}正常回复玩家并判断其推理：如果已经完全正确，必须在回复末尾原样附加 <turtle-soup-reveal reason="solved" />；如果玩家明确索要汤底或放弃，必须附加 <turtle-soup-reveal reason="give-up" />。未结束时禁止输出该标签，也不能泄露汤底。`
+          : `\n\n[海龟汤会话隔离]\n${ISOLATION_RULE}`;
       for (let index = payload.messages.length - 1; index >= 0; index -= 1) {
         const message = payload.messages[index];
         if (message.role !== "user") continue;
-        if (typeof message.content === "string") message.content += instruction;
+        if (typeof message.content === "string") {
+          if (!message.content.includes("[海龟汤插件强制输出协议]") && !message.content.includes("[海龟汤主持协议]")) message.content += instruction;
+        }
         else if (Array.isArray(message.content)) {
           const textPart = message.content.find(part => part?.type === "text" && typeof part.text === "string");
-          if (textPart) textPart.text += instruction;
-          else message.content.push({ type: "text", text: instruction });
+          if (textPart) {
+            if (!textPart.text.includes("[海龟汤插件强制输出协议]") && !textPart.text.includes("[海龟汤主持协议]")) textPart.text += instruction;
+          } else message.content.push({ type: "text", text: instruction });
         }
         break;
       }
@@ -392,9 +432,6 @@ ${game.restoredAfterDelete ? "汤底卡片已被删除，本轮已回退到揭�
           clearPending(payload.sessionId);
           ctx.ui.toast("角色没有按格式完成出题，请再试一次");
         }
-      } else if (pendingHost) {
-        clearPending(payload.sessionId);
-        ctx.ui.toast("海龟汤插件已触发，但角色没有返回题目格式，请再试一次");
       }
       const game = readGames()[payload.sessionId];
       if (!game || game.status === "ended") return payload;

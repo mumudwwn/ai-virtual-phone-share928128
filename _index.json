@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-21T02:49:15.259Z",
+  "generatedAt": "2026-09-21T03:52:35.721Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -73,7 +73,7 @@
     },
     {
       "name": "线上美化",
-      "count": 44
+      "count": 45
     },
     {
       "name": "线上聊天状态栏",
@@ -6095,6 +6095,25 @@
       "avatar": "资源/线上美化/薄荷生巧/.avatar.png",
       "ownerHash": "c6eb64f5a21fe7976bb628a5a0d28675fe8cfc7bc2290fd401fcde6ba18999e7",
       "updatedAt": "2026-08-28T02:00:46+08:00"
+    },
+    {
+      "folder": "线上美化",
+      "name": "震惊了兔byKk7",
+      "dirName": "震惊了兔byKk7",
+      "type": "dir",
+      "path": "资源/线上美化/震惊了兔byKk7",
+      "files": [
+        "资源/线上美化/震惊了兔byKk7/Float线上【震惊了兔】.docx"
+      ],
+      "images": [
+        "资源/线上美化/震惊了兔byKk7/1000077049.jpg",
+        "资源/线上美化/震惊了兔byKk7/1000077051.jpg"
+      ],
+      "description": "不适配的地方可以扔给ai改~",
+      "author": "kk7",
+      "avatar": "资源/线上美化/震惊了兔byKk7/.avatar.png",
+      "ownerHash": "5b044cc95c402dab03ba924c436888aee5db4a1915c87912eb73dff2bf8c513e",
+      "updatedAt": "2026-09-21T11:51:33+08:00"
     },
     {
       "folder": "线上美化",

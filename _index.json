@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-22T06:20:27.541Z",
+  "generatedAt": "2026-09-22T06:22:21.043Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -9,7 +9,7 @@
     },
     {
       "name": "Js插件",
-      "count": 58
+      "count": 59
     },
     {
       "name": "MCP",
@@ -865,6 +865,23 @@
       "avatar": "资源/Js插件/生图预设快捷保存&切换🖼️/.avatar.png",
       "ownerHash": "8be1404dc48b69dac097ce254c34d80c5a2bc55c62acef7b9d6217419189b554",
       "updatedAt": "2026-09-14T14:54:36+08:00"
+    },
+    {
+      "folder": "Js插件",
+      "name": "用于角色开大小号的记忆同步插件",
+      "dirName": "用于角色开大小号的记忆同步插件",
+      "type": "dir",
+      "path": "资源/Js插件/用于角色开大小号的记忆同步插件",
+      "files": [
+        "资源/Js插件/用于角色开大小号的记忆同步插件/双重身份·记忆同步-功能介绍.md",
+        "资源/Js插件/用于角色开大小号的记忆同步插件/小号记忆同步.js"
+      ],
+      "images": [],
+      "description": "功能介绍看下面文件\n有bug🍠戳我",
+      "author": "觎烬",
+      "avatar": "资源/Js插件/用于角色开大小号的记忆同步插件/.avatar.png",
+      "ownerHash": "399610b526381ffe701e1ef5470ffbbd23e0bdd78da58eed769f6ec26ac9895d",
+      "updatedAt": "2026-09-22T14:21:08+08:00"
     },
     {
       "folder": "Js插件",

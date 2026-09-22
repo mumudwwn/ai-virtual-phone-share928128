@@ -1,7 +1,7 @@
 {
   "schema": "ai_phone_share_index",
   "schemaVersion": 1,
-  "generatedAt": "2026-09-21T19:19:49.340Z",
+  "generatedAt": "2026-09-22T00:19:00.372Z",
   "folders": [
     {
       "name": "A 重要须知（自部署版请查看）",
@@ -9,7 +9,7 @@
     },
     {
       "name": "Js插件",
-      "count": 56
+      "count": 57
     },
     {
       "name": "MCP",
@@ -1092,6 +1092,22 @@
       "avatar": "",
       "ownerHash": "39b4db040b0b05244ca2889b6bd1e99aa85e7d85600bc3eb247633752276fb3c",
       "updatedAt": "2026-08-20T19:15:35+08:00"
+    },
+    {
+      "folder": "Js插件",
+      "name": "重置聊天室CSS",
+      "dirName": "重置聊天室CSS",
+      "type": "dir",
+      "path": "资源/Js插件/重置聊天室CSS",
+      "files": [
+        "资源/Js插件/重置聊天室CSS/float-chat-css-rescue.js"
+      ],
+      "images": [],
+      "description": "以防有人和我一样喜欢乱改聊天室CSS，导致聊天窗口炸窗、无法打开\n这是一个可以从扩展插件中重置聊天室CSS的小工具\n不会改动任何聊天数据",
+      "author": "",
+      "avatar": "",
+      "ownerHash": "c9ade4e6ced1ed366176dbec99dc7ed8f71da5f1f4f2a6a552cf248b097b5b1b",
+      "updatedAt": "2026-09-22T08:17:56+08:00"
     },
     {
       "folder": "Js插件",

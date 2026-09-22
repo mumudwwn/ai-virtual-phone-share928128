@@ -1,10 +1,10 @@
 # 上传服务专用配置：本仓库在 Netlify 上作为独立站点部署时，
-# 只跑 netlify/functions 里的函数，没有页面构建。
+# 只跑 netlify/functions 里的函数；public 仅提供一个部署落点。
 [build]
   command = "echo no build"
-  publish = "."
+  publish = "public"
   # 只有上传服务本身变动才重新部署；资源上架/索引机器人提交不触发构建，省构建分钟
-  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- netlify/ netlify.toml"
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- netlify/ public/ netlify.toml"
 
 [functions]
   directory = "netlify/functions"
